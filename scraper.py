@@ -1001,28 +1001,6 @@ class Scraper(object):
             return grade
         else: 
             self.grade = grade
-    
-    def get_grade_faculty(self, session=None, return_values=False):
-        '''
-        ※未実装
-        http://kt.kanazawa-med.ac.jp/timetable/List_Timetable.php にアクセスし、表示から学部・学年を取得する。
-        
-        Parameters
-        ----------
-        session : requests.Session. Default is None.
-            指定がない場合は、self.sessionを用いる。
-        return_values : bool. Default is False.
-            Trueの場合、返り値として学部、学年を返す。
-        
-        Returns
-        -------
-        faculty : str
-            学部。引数にreturn_valuesを渡した場合のみ。
-        grade : str
-            学年。引数にreturn_valuesを渡した場合のみ。
-        '''
-        pass    # 未実装
-
 
     def get_dlpage_url(self, date_list, faculty=None, grade=None, session=None):
         '''
