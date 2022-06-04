@@ -1,11 +1,9 @@
 import requests as rq
 from bs4 import BeautifulSoup
 import unicodedata
-import re
+import re, os
 import datetime
-import os
 import copy
-import datetime
 
 # InsecureRequestWarningを非表示にする。
 # この警告は requestsのgetの引数にverify=Falseを指定した場合に発生するもの。
