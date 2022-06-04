@@ -1103,9 +1103,6 @@ class Scraper(object):
         -----
         1) 授業日(date)や時限(period)に関する情報は取得できないため、引数で指定する必要がある。
         '''
-        # TODO: 各タイトルごとの情報抽出について最適化
-        # TODO: ダウンロードページから授業日(date, period)を取得する仕様を追加
-        # TODO: 授業日を取得
         
         # str型でも受け取れるようにする
         if type(dl_page_url) == str:
@@ -1164,7 +1161,6 @@ class Scraper(object):
 
                     text.url = dl_url
                     text.file_name = name
-
                 elif "ユニ" in title:
                     # ユニット名
                     # element を再度抽出
@@ -1173,45 +1169,35 @@ class Scraper(object):
                     unit_num = set[br_position[1]+6:br_position[2]].strip()[1:3]
                     date = set[br_position[2]+6:br_position[3]].strip()[:6].replace('月', '').replace('日', '')
                     period = set[br_position[3]-2:br_position[3]-1]
-
                     text.unit = unit
                     text.unit_num = unit_num
                     text.date = _year + date
                     text.period = period
-
                 elif "区分" in title:
                     # 区分
                     text.lesson_type = element
-
                 elif "講義" in title:
                     # 講義・実習内容
                     text.thema = element
-
                 elif "講座" in title:
                     # 講座名
                     text.course = element
-
                 elif "担当" in title:
                     # 担当教員
                     text.teachers= element
-
                 elif "公開開始日" == title:
                     text.upload_date = element.split()[0].replace('/', '')
-                    
                 elif "公開終了日" == title:
                     # 公開終了日
                     text.end_date = element.split()[0].replace('/', '')
-                
                 elif "教材・資料名" == title:
                     # 教材・資料名
                     text.name = element
-
                 elif "教材・資料の説明" == title:
                     # 教材・資料の説明
                     text.explanations = element
-                
                 else:
-                    ("不明な項目です: '" + title + "'")
+                    pass
 
             text_list.append(text)
             
