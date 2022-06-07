@@ -99,28 +99,16 @@ class Text(object):
         self.lesson_type = lesson_type    
         self.course = course              
         
-        if type(upload_date) in (int, str):
-            self.upload_date = str(upload_date)
-        else:
-            self.upload_date = None
-        
-        if type(end_date) in (int, str):
-            self.end_date = str(end_date)
-        else:
-            self.end_date = None
+        self.upload_date = str(upload_date) if type(upload_date) in (int, str) else None
+
+        self.end_date = str(end_date) if type(end_date) in (int, str) else None
 
         self.explanations = explanations 
         self.file_name = file_name        
 
-        if type(date)in(int, str):
-            self.date = str(date)
-        else:
-            self.date = None
+        self.date = str(date) if type(date) in (int, str) else None
 
-        if type(period) in (int, str):
-            self.period = str(period)
-        else:
-            self.period = None
+        self.period = str(period) if type(period) in (int, str) else None
 
         self.url = url      
         self.target = target
@@ -154,7 +142,7 @@ class Text(object):
         後半の項目は文字幅の指定がないものとする。
         '''
 
-        if titles == None:
+        if titles is None:
             # 表示する項目が指定されなかった場合の項目の指定
             titles = ["unit",
                     "target_icon",
@@ -195,7 +183,7 @@ class Text(object):
             width = [int(width)]*len(titles)
         elif type(width)==int:
             width = [width]*len(titles)
-        elif width==None:
+        elif width is None:
             width = [None]*len(titles)
         elif len(titles) > len(width):
             lack = len(titles) - len(width)
@@ -242,12 +230,11 @@ class Text(object):
         1) self.targetがTrueのものをダウンロード対象とする。
         '''
 
-        if self.target:
-            url = self.url
-        else:
-            url = None
+        url = self.url if self.target else None
         
         return url
+
+        '''-------------------ここまで3項式適用------------------------'''
     
     def be_target(self):
         '''ダウンロード対象に指定する。'''
@@ -292,7 +279,7 @@ class Text(object):
         else:
             target_icon = "　"
 
-        date = self.date[0:4] + "/" + self.date[4:6] + "/" + self.date[6:8] if (title=="date") and (self.date!=None) else None
+        date = self.date[0:4] + "/" + self.date[4:6] + "/" + self.date[6:8] if (title=="date") and (self.date is not None) else None
         period = self.period + '限' if (title=="period") and (self.period!=None) else None
         upload_date = self.upload_date[0:4] + "/" + self.upload_date[4:6] + "/" + self.upload_date[6:8] if (title=="upload_date") and (self.upload_date!=None) else None
         end_date = self.end_date[0:4] + "/" + self.end_date[4:6] + "/" + self.end_date[6:8] if (title=="end_date") and (self.end_date!=None) else None
@@ -316,12 +303,13 @@ class Text(object):
                 None: None}
 
         item = dict[title]
-        if item == None:
+
+        if item is None:
             item = ''
         else:
             pass
 
-        if width == None:
+        if width is None:
             pass
         else:
             item = ljust_zen(string=item, word_count=width)   # 文字列長の調節
@@ -348,33 +336,33 @@ class TitleNames(Text):
     def set_titles(self, name=None, unit=None, thema=None, teachers=None, date=None, period=None, url=None, target=None, lesson_type=None, course=None, upload_date=None, end_date=None, explanations=None, file_name=None):
         '''項目名を設定する。'''
 
-        if name != None:
+        if name is not None:
             self.name = name
-        if unit != None:
+        if unit is not None:
             self.unit = unit
-        if thema != None:
+        if thema is not None:
             self.thema = thema
-        if teachers!= None:
+        if teachers is not None:
             self.teachers= teachers
-        if date != None:
+        if date is not None:
             self.date = date
-        if period != None:
+        if period is not None:
             self.period = period
-        if url != None:
+        if url is not None:
             self.url = url
-        if target != None:
+        if target is not None:
             self.target = target
-        if lesson_type != None:
+        if lesson_type is not None:
             self.lesson_type = lesson_type
-        if course != None:
+        if course is not None:
             self.course = course
-        if upload_date != None:
+        if upload_date is not None:
             self.upload_date = upload_date
-        if end_date != None:
+        if end_date is not None:
             self.end_date = end_date
-        if explanations != None:
+        if explanations is not None:
             self.explanations = explanations
-        if file_name != None:
+        if file_name is not None:
             self.file_name = file_name
         
     def get_title(self, title, width=None):
@@ -386,7 +374,7 @@ class TitleNames(Text):
         1) self.targetが指定されていない場合、空白を返す。
         '''
 
-        if self.target == None:
+        if self.target is None:
             target_icon = ""
         else:
             target_icon = self.target
@@ -404,12 +392,12 @@ class TitleNames(Text):
                 None: ""}   # Noneの場合は空白
 
         element = dict[title]
-        if element == None:
+        if element is None:
             element = ''
         else:
             pass
 
-        if width == None:
+        if width is None:
             pass
         else:
             element = ljust_zen(string=element, word_count=width)
@@ -431,7 +419,7 @@ class Unit(object):
         Title_namesオブジェクトを保持
     '''
 
-    def __init__(self, text_list=list(), name=None, title_names=None):
+    def __init__(self, text_list=None, name=None, title_names=None):
         '''
         Parameters
         ----------
@@ -443,7 +431,7 @@ class Unit(object):
             Title_namesオブジェクトを保持
         '''
         self.name = name
-        self.text_list = text_list
+        self.text_list = list() if text_list is None else text_list
         self.title_names = title_names
     
     def append(self, text):
@@ -500,56 +488,80 @@ class Unit(object):
         -----
         1) indexが指定されていない場合は全て表示する。
         '''
-        # インデックスを指定されなかった場合は全て表示する
-        if index==None:
-            index = [x for x in range(len(self.text_list))]
-        
-        # インデックスがint型(もしくはfloat型)で渡された場合要素がひとつのリストに変換する
-        if type(index) in (float, str):
-            index = int(index)
-        if type(index)==int:
-            index = [index]
-
-        if type(titles) == str:
-            titles = [titles]
-        elif titles == None:
-            titles = ["unit",
-                      "target_icon",
-                      "name",
-                      "teachers",
-                      "thema",
-                      "date",
-                      "period"]
-
-        # widthが指定されていない場合、各項目ごとで最も長い文字列に合わせる
-        if width==None:
-            width=[None]*len(titles)
-
-        # title=Trueの場合self.text_listの先頭にself.title_namesを割り込ませる
-        text_list_copy = copy.copy(self.text_list)
-        if show_title and (self.title_names != None):
-            text_list_copy.insert(0, self.title_names)
-            # indexの要素全てに1を足し頭に0を加える
-            index = [i + 1 for i in index]
-            index.insert(0, 0)
-        
-        # 各項目ごとに処理する
-        for i in range(len(titles)):
-            # widthで指定されているものを除き長さを確認する。
-            if width[i]==None:
-                # ループ処理でindexで指定されているtextオブジェクトそれぞれ確認し最大値
-                element_len = list()
-                for j in index:
-                    element = text_list_copy[j].get_item(titles[i])
-                    element_len.append(len_zen2(str(element)))                    
-                width[i] = max(element_len)
-            else:
-                pass
-
         lines = list()
-        for i in index:
-            line = text_list_copy[i].show(titles=titles, width=width, separate_with_line=separate_with_line)
-            lines.append(line)
+        if len(self.text_list) == 0:
+            # 空のリストに対しmax()関数が使えないため。
+            pass
+
+        else:
+            # インデックスを指定されなかった場合は全て表示する
+            if index is None:
+                index = [x for x in range(len(self.text_list))]
+            
+            # インデックスがint型(もしくはfloat型)で渡された場合要素がひとつのリストに変換する
+            if type(index) in (float, str):
+                index = int(index)
+            if type(index)==int:
+                index = [index]
+            
+            if titles=="all":
+                # すべての項目について返す。
+                titles = [
+                    "name",
+                    "unit",
+                    "unit_num",
+                    "thema",
+                    "teachers",
+                    "lesson_type",
+                    "course",
+                    "upload_date",
+                    "end_date",
+                    "explanations",
+                    "file_name",
+                    "date",
+                    "period",
+                    "url",
+                    "target"
+                ]
+            elif type(titles) == str:
+                titles = [titles]
+            elif titles is None:
+                titles = ["unit",
+                        "target_icon",
+                        "name",
+                        "teachers",
+                        "thema",
+                        "date",
+                        "period"]
+
+            # widthが指定されていない場合、各項目ごとで最も長い文字列に合わせる
+            if width is None:
+                width=[None]*len(titles)
+
+            # title=Trueの場合self.text_listの先頭にself.title_namesを割り込ませる
+            text_list_copy = copy.copy(self.text_list)
+            if show_title and (self.title_names is not None):
+                text_list_copy.insert(0, self.title_names)
+                # indexの要素全てに1を足し頭に0を加える
+                index = [i + 1 for i in index]
+                index.insert(0, 0)
+            
+            # 各項目ごとに処理する
+            for i in range(len(titles)):
+                # widthで指定されているものを除き長さを確認する。
+                if width[i] is None:
+                    # ループ処理でindexで指定されているtextオブジェクトそれぞれ確認し最大値
+                    element_len = list()
+                    for j in index:
+                        element = text_list_copy[j].get_item(titles[i])
+                        element_len.append(len_zen2(str(element)))                    
+                    width[i] = max(element_len)
+                else:
+                    pass
+                
+            for i in index:
+                line = text_list_copy[i].show(titles=titles, width=width, separate_with_line=separate_with_line)
+                lines.append(line)
         
         return lines
     
@@ -574,6 +586,7 @@ class Unit(object):
             Falseの場合は、項目間を"   "で区切る        
         '''
         lines = self.show(index=index, titles=titles, width=width, show_title=show_title, separate_with_line=separate_with_line)
+        print(0)
         for line in lines:
             print(line)
 
@@ -638,7 +651,7 @@ class Unit(object):
             titles = [titles]
 
         # titlesが指定されていない場合、date -> period -> nameの優先順でソートする。
-        if titles == None:
+        if titles is None:
             titles = ["date", "period", "name"]
 
         # reverseはリストで取り込む。
@@ -758,7 +771,7 @@ class Unit(object):
         texts_temp : list
             コピーされたTextオブジェクトを格納。
         '''
-        if indexes==None:
+        if indexes is None:
             indexes = list(range(len(self.text_list)))
         elif type(indexes)==int:
             indexes = list(indexes)
@@ -785,7 +798,7 @@ class Unit(object):
         -----
         1) indexesを引数に渡さなかった場合は、slef.text_listに格納されている全てのTextオブジェクトを削除する。
         '''
-        if indexes==None:
+        if indexes is None:
             self.text_list.clear()
         else:
             if type(indexes)==int:
@@ -874,19 +887,19 @@ class Scraper(object):
         # id, passwordが指定されていない場合はself.id, self.passwordを利用する。
         # TODO: エラーメッセージを廃止、例外を返す(raise)。
         #       https://getpocket.com/read/2772745088を参考にすること。
-        if id != None:
+        if id is not None:
             self.id = id
         else:
             pass
 
-        if password != None:
+        if password is not None:
             self.password = password
         else:
             pass
 
-        if session != None:
+        if session is not None:
             self.session = session
-        elif self.session == None:
+        elif self.session is None:
             self.session = rq.Session()
         else:
             pass
@@ -935,7 +948,7 @@ class Scraper(object):
         facutly : str
             推測した学部。引数にreturn_value=Trueを渡した場合のみ
         '''
-        if id == None:
+        if id is None:
             id = self.id
         else:
             pass
@@ -971,12 +984,14 @@ class Scraper(object):
             推測した学年。
             引数にreturn_value=Trueを渡した場合のみ。
         '''
+        if id is None:
+            id = self.id
+
         # 今日の日付を取得する
-        dt_now_jp = datetime.datetime.now(
-            datetime.timezone(datetime.time(hours=9))
-        )
+        dt_now = datetime.date.today()
+
         # 現在の年度を計算する
-        year_now, month_now = dt_now_jp.year, dt_now_jp.month
+        year_now, month_now = dt_now.year, dt_now.month
 
         # 学籍番号から入学年度を計算する
         # ma0 -> 2000年度に入学
@@ -986,7 +1001,7 @@ class Scraper(object):
         small_char = "abcdefghijklmnopqrstuvwxyz"
         
         decades_num = small_char.find(id_alphabet)
-        year_admission = 2000 + decades_num*10 + id_num
+        year_admission = 2000 + decades_num*10 + int(id_num)
         
         # fyear:年度
         # 現在の年度を計算する
@@ -1002,7 +1017,7 @@ class Scraper(object):
         else: 
             self.grade = grade
 
-    def get_dlpage_url(self, date_list, faculty=None, grade=None, session=None):
+    def get_dlpage_url(self, date_list, faculty=None, grade=None, session=None, return_year=False):
         '''
         各教材のダウンロードページへのURLを取得する。
         
@@ -1017,6 +1032,8 @@ class Scraper(object):
             学年。指定がない場合はself.gradeを用いる。
         session : requests.Session
             Sessionクラス。指定がない場合はself.sessionを用いる。
+        return_year : bool. Default is False.
+            Trueを指定した場合、授業が行われる年を格納したリストを返す。
 
         Returns
         -------
@@ -1033,13 +1050,13 @@ class Scraper(object):
         else:
             pass
 
-        if faculty == None:
+        if faculty is None:
             faculty = self.faculty
         
-        if grade == None:
+        if grade is None:
             grade = self.grade
         
-        if session == None:
+        if session is None:
             session = self.session
 
         TIMETABLE_URL = "https://kt.kanazawa-med.ac.jp/timetable/List_Timetable.php"
@@ -1056,7 +1073,7 @@ class Scraper(object):
                 'strSelectGakubuNen': faculty + "," + grade
             }
 
-            timetable_page = self.session.post(url=TIMETABLE_URL, data=form)
+            timetable_page = self.session.post(url=TIMETABLE_URL, data=form, verify=False)
             timetable_page.encoding = 'cp932'
             timetable_text = timetable_page.text.replace('\n', '')
 
@@ -1077,8 +1094,11 @@ class Scraper(object):
                 
             else:
                 pass
-
-        return dl_page_url_list, year_list
+        
+        if return_year:
+            return dl_page_url_list, year_list
+        else:
+            return dl_page_url_list
 
     
     def get_text_info(self, dl_page_url, year="????"):
@@ -1110,7 +1130,7 @@ class Scraper(object):
         else:
             pass
         
-        if type(year) == (str or int):
+        if type(year) in (str, int):
             year = [str(year)[0:4]] * len(dl_page_url)
         else:
             pass
@@ -1133,34 +1153,49 @@ class Scraper(object):
                 info_page.encoding = 'cp932'
                 info_text = info_page.text.replace('\n', '')
 
+
             # '●'を目印に項目名を探す。
             points = re.finditer("●", info_text)
             point_position = [point.start() for point in points]
             
             for i in (range(len(point_position))):
-                if len(point_position)-1 == i:
+                if len(point_position)-2 <= i:
+                    # 一番後ろ、もしくは後ろから二番目の"●"の場合
                     set = info_text[point_position[i]+1:]
                 else:
                     set = info_text[point_position[i]+1:point_position[i+1]]
 
-
                 br_position = [br.start() for br in re.finditer("<br />", set)]
 
-                title = set[:br_position[0]].strip()
-                element = set[br_position[0]+6:br_position[1]].strip()
+                # ●教材・資料名<br />　●R４高齢者の内分泌疾患4年<br />●教材・資料の説明
+                # ↑のように要素内に'●'が使用されていると正常に読み込めない
+                # 以下、その対策
+                if len(br_position) in (0, 1):
+                    if len(point_position)-1 != i:
+                        set = info_text[point_position[i]+1:point_position[i+2]]
+
+                    br_position = [br.start() for br in re.finditer("<br />", set)]
+
+                title = set[:br_position[0]].strip() if len(br_position) > 0 else set
+                element = set[br_position[0]+6:br_position[1]].strip() if len(br_position) > 0 else set
 
                 if title[:2] == "本文":
                     # ダウンロード用のURLが含まれる項目
+                    print(br_position)
+                    print("本文～")
+                    print(title)
                     dl_link = BeautifulSoup(title, 'html.parser').select("a[href^='./Download']")[0]
 
                     dl_url_part = dl_link.get('href')
                     DL_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 
                     dl_url = DL_URL_HEAD + dl_url_part[1:]
-                    name = dl_link.getText()
+                    file_name = dl_link.getText()
+                    print(file_name)
+                    input()
 
                     text.url = dl_url
-                    text.file_name = name
+                    text.file_name = file_name
                 elif "ユニ" in title:
                     # ユニット名
                     # element を再度抽出
@@ -1186,6 +1221,7 @@ class Scraper(object):
                     # 担当教員
                     text.teachers= element
                 elif "公開開始日" == title:
+                    # 公開開始日
                     text.upload_date = element.split()[0].replace('/', '')
                 elif "公開終了日" == title:
                     # 公開終了日
@@ -1244,6 +1280,7 @@ class Scraper(object):
             text = [text]
         elif type(text).__name__ == 'Unit':
             text = text.text_list
+        print(text)
         
         if save == True:
             # ファイルを保存する場合
@@ -1254,7 +1291,8 @@ class Scraper(object):
 
             if type(file_name).__name__ in ('str', 'NoneType'):
                 file_name = [file_name] * len(text)
-            
+            print(file_name)
+
             # ダウンロードに失敗した教材のindexを格納
             failed = list()
             # 各要素ごとにダウンロードを実行
@@ -1262,30 +1300,36 @@ class Scraper(object):
             for i in range(len(text)):
                 _text = text[i]
                 _file_name = file_name[i]
-                
+  
                 if type(_text).__name__=='Text':
                     # Textオブジェクト固有の処理
                     if _text.target==False:
                         # targetの対象でない場合は終了
-                        break
+                        continue   # <- 問題あり
                     
                     if _file_name in ('', None):
                         # ファイル名の指定が無ければText.file_name
                         _file_name = _text.file_name
 
                     _text = _text.url
-
+                
+                print(_file_name)
                 if _file_name in ('', None):
                     # 利用できるファイル名がない場合
                     failed.append(i)
-                    break
+                    continue
 
                 _save_dir = save_dir[i]
-                if _save_dir==None:
+                if _save_dir is None:
                     # 保存先の指定がなかった場合、カレントディレクトリに保存
                     _save_dir = ('')
-                
+                    
+                # ディレクトリの存在確認・作成
+                if not os.path.exists(_save_dir):
+                    os.makedirs(_save_dir)
+
                 _save_path = os.path.join(_save_dir, _file_name)
+                print(_save_path)
 
                 count = 0
                 limit = 5   # ５回チャレンジ
@@ -1293,12 +1337,14 @@ class Scraper(object):
                     count += 1
                     try:
                         data = self.session.get(_text, verify=False).content
+                        
                         with open(_save_path, mode='wb') as f:
                             # バイナリ書き込みモード
                             f.write(data)
                         break
                     except Exception as e:
                         if count >= limit:
+                            print(e)
                             failed.append(i)
                             break
                         else:
@@ -1310,8 +1356,11 @@ class Scraper(object):
             data_list = list()
             for i in range(len(text)):
                 _text = text[i]
+
                 if type(_text).__name__=='Text':
                     _text = _text.url
+                    if _text.target == False:
+                        continue
                 
                 count = 0
                 limit = 5   # ５回チャレンジ
@@ -1417,22 +1466,22 @@ class Logger(object):
         self.status = status
 
         #dateに関する処理
-        # date==None, time=='xxxxxx' -> date==現在の日付, time=='xxxxxx'
-        # date==None, time==None -> date==現在の日付, time==現在の時刻
-        # date=='xxxxxxxx', time==None -> date=='xxxxxxxx', time==現在の時刻 
+        # date is None, time=='xxxxxx' -> date==現在の日付, time=='xxxxxx'
+        # date is None, time is None -> date==現在の日付, time==現在の時刻
+        # date=='xxxxxxxx', time is None -> date=='xxxxxxxx', time==現在の時刻 
 
         # 0埋めで日付の表示として適切な文字列に変換する。[YYYY/MM/DD]
         format_date = lambda year, month, day: "{:0>4}/{:0>2}/{:0>2}".format(year, month, day)
 
         dt_now = datetime.datetime.now()
-        if date==None:
+        if date is None:
             date = format_date(dt_now.year, dt_now.month, dt_now.day)
         elif type(date)==int:
             str(date)
         elif type(date).__name__=='datetime':
             # datetimeオブジェクトを指定された場合、
             # timeが指定されていなければdatetimeオブジェクトから時間を指定する。
-            if time==None:
+            if time is None:
                 time = date
             date = format_date(date.year, date.month, date.day)
         elif type(date).__name__=='date':
@@ -1448,7 +1497,7 @@ class Logger(object):
         # timeに関する処理
         format_time = lambda hour, minute, second: "{:0>2}:{:0>2}:{:0>2}".format(hour, minute, second)
 
-        if time==None:
+        if time is None:
             # 現時刻
             time = format_time(dt_now.hour, dt_now.minute, dt_now.second)
         elif type(time)==int:
@@ -1486,7 +1535,7 @@ class Logger(object):
         clear: bool. default is True.
             Trueの場合、ログを保存したのちself.archiveの内容を削除する。
         '''
-        if path==None:
+        if path is None:
             path = self.path
         
         with open(path, mode='a') as f:
