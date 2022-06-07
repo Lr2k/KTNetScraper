@@ -586,7 +586,7 @@ class Unit(object):
             Falseの場合は、項目間を"   "で区切る        
         '''
         lines = self.show(index=index, titles=titles, width=width, show_title=show_title, separate_with_line=separate_with_line)
-        print(0)
+
         for line in lines:
             print(line)
 
@@ -1181,9 +1181,6 @@ class Scraper(object):
 
                 if title[:2] == "本文":
                     # ダウンロード用のURLが含まれる項目
-                    print(br_position)
-                    print("本文～")
-                    print(title)
                     dl_link = BeautifulSoup(title, 'html.parser').select("a[href^='./Download']")[0]
 
                     dl_url_part = dl_link.get('href')
@@ -1191,8 +1188,6 @@ class Scraper(object):
 
                     dl_url = DL_URL_HEAD + dl_url_part[1:]
                     file_name = dl_link.getText()
-                    print(file_name)
-                    input()
 
                     text.url = dl_url
                     text.file_name = file_name
@@ -1280,7 +1275,6 @@ class Scraper(object):
             text = [text]
         elif type(text).__name__ == 'Unit':
             text = text.text_list
-        print(text)
         
         if save == True:
             # ファイルを保存する場合
@@ -1291,7 +1285,6 @@ class Scraper(object):
 
             if type(file_name).__name__ in ('str', 'NoneType'):
                 file_name = [file_name] * len(text)
-            print(file_name)
 
             # ダウンロードに失敗した教材のindexを格納
             failed = list()
@@ -1313,7 +1306,6 @@ class Scraper(object):
 
                     _text = _text.url
                 
-                print(_file_name)
                 if _file_name in ('', None):
                     # 利用できるファイル名がない場合
                     failed.append(i)
@@ -1329,7 +1321,6 @@ class Scraper(object):
                     os.makedirs(_save_dir)
 
                 _save_path = os.path.join(_save_dir, _file_name)
-                print(_save_path)
 
                 count = 0
                 limit = 5   # ５回チャレンジ
@@ -1344,7 +1335,6 @@ class Scraper(object):
                         break
                     except Exception as e:
                         if count >= limit:
-                            print(e)
                             failed.append(i)
                             break
                         else:
