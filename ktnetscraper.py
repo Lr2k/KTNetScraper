@@ -236,11 +236,11 @@ class Text(object):
 
         '''-------------------ここまで3項式適用------------------------'''
     
-    def be_target(self):
+    def is_target(self):
         '''ダウンロード対象に指定する。'''
         self.target = True
     
-    def not_target(self):
+    def is_not_target(self):
         '''ダウンロードの対象から外す。'''
         self.target = False
     
@@ -449,15 +449,15 @@ class Unit(object):
         else:
             self.text_list.append(text)
 
-    def be_target(self):
+    def is_target(self):
         '''self.text_listに含まれる全てのText.targetをTrueにする。'''
         for text in self.text_list:
-            text.be_target()
+            text.is_target()
     
-    def not_target(self):
+    def is_not_target(self):
         '''self.text_listに含まれる全てのText.targetをFalseにする。'''
         for text in self.text_list:
-            text.not_target()
+            text.is_not_target()
     
     def show(self, index=None, titles=None, width=None, show_title=True, separate_with_line=False):
         '''
