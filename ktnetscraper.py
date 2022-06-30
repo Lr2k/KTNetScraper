@@ -860,7 +860,9 @@ class Scraper(object):
         self.password = password
         self.faculty = faculty      # 大文字 M or N
         self.grade = grade
-    
+
+        #loggerの初期化
+        self.log = Logger(path='scraper.log')    
 
     def login(self, id=None, password=None, session=None):
         '''
@@ -927,6 +929,7 @@ class Scraper(object):
         response_login.encoding = 'cp932'
 
         if "ログインに失敗しました。" in response_login.text:
+            self.log.log(status=1, message="ログインに失敗 ID:" + self.id)
             raise WrongIdPassError
         else:
             pass
@@ -1072,6 +1075,8 @@ class Scraper(object):
                 'intSelectDay':date[6:8],
                 'strSelectGakubuNen': faculty + "," + grade
             }
+
+            self.log.log(message)
 
             timetable_page = self.session.post(url=TIMETABLE_URL, data=form, verify=False)
             timetable_page.encoding = 'cp932'
@@ -1396,13 +1401,13 @@ class Logger(object):
         saveメソッドで保存するたびにクリアする。
         最新のログも保持する。
     '''
-    def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=list()):
+    def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None):
         self.path = path
         self.status = status
         self.date = date
         self.time = time
         self.message = message
-        self.archive = archive
+        self.archive = archive if archive is not None else list()
     
     def log(self, status=0, date=None, time=None, message=None):
         '''
