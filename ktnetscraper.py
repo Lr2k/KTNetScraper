@@ -1044,19 +1044,26 @@ class Scraper(object):
             timetable_text = timetable_page.text.replace('\n', '')
 
             if "この日に講義はありません" in timetable_text:
+                message = "教材なし 授業日:" + date[0:4] + "/" + date[4:6] + "/" + date[6:8]
+                self.log.log(status=0, message = message)
                 pass
 
             elif "ユニット名" in timetable_text:
                 # 授業がある日のページを開いた場合の動作
                 soup = BeautifulSoup(timetable_text, 'html.parser')
 
-                dl_page_url_head = "https://kt.kanazawa-med.ac.jp/timetable"    
+                dl_page_url_head = "https://kt.kanazawa-med.ac.jp/timetable"
+
+
 
                 for link in soup.select("a[href^='./View_Kyozai']"):
                     dl_page_url_element = link.get('href')[1:]
                     dl_page_url = dl_page_url_head + dl_page_url_element
                     dl_page_url_list.append(dl_page_url)
                     year_list.append(date[0:4])
+
+                    message = 
+                    self.log.log()
                 
             else:
                 pass
