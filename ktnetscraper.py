@@ -115,6 +115,8 @@ class Text(object):
 
     def show(self, titles=None, width=None, separate_with_line=False):
         '''
+        TODO: メソッド名をexportに変更する。
+
         Textの保持する情報を一行の文字列にまとめ、返す。
 
         Parameters
@@ -246,6 +248,8 @@ class Text(object):
     
     def invert_target(self):
         '''
+        TODO: メソッド名をswitch_target_flagに変更
+
         self.targetのbool値を反転させる。
         '''
         self.target = not self.target
@@ -461,6 +465,8 @@ class Unit(object):
     
     def show(self, index=None, titles=None, width=None, show_title=True, separate_with_line=False):
         '''
+        TODO: メソッド名をexportに変更
+
         Textオブジェクトの保持する情報を行ごとにリストに格納する。
         各行の内容はText.show()に依存する。
         
@@ -567,6 +573,8 @@ class Unit(object):
     
     def print(self, index=None, titles=None, width=None, show_title=True, separate_with_line=False):
         '''
+        TODO: メソッド名をshowに変更
+
         Textオブジェクトの保持する情報を行ごとに出力する。
         出力内容はUnit.show()に依存する。
         
@@ -673,6 +681,8 @@ class Unit(object):
     # 複数の項目を指定した場合、全ての項目で示されるvalueを満たす物を返す
     def find(self, titles, values):
         '''
+        TODO: メソッド名をfilterに変更する。
+
         項目と要素を指定することで、当てはまる教材をself.text_listから検索しインデックスを返す。
         複数の項目をリストやタプルで選択可能。複数の項目について指定した場合、全ての条件を満たすTextのインデックスを返す。
         それぞれ、複数の要素で検索することも可能。この場合はどちらかの要素を持つTextのインデックスを返す。
@@ -1519,6 +1529,7 @@ class Logger(object):
 
     def save(self, path=None, clear=True):
         '''
+        TODO: メソッド名をstoreに変更する。
         self.archiveにあるログをファイルに保存する。
         指定したファイルが既に存在する場合、末尾に追加する。
         
