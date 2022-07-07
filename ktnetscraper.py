@@ -244,11 +244,9 @@ class Text(object):
         '''ダウンロードの対象から外す。'''
         self.target = False
     
-    def invert_target(self):
+    def switch_target_flag(self):
         '''
-        TODO: メソッド名をswitch_target_flagに変更
-
-        self.targetのbool値を反転させる。
+        self.targetの値を反転させる。
         '''
         self.target = not self.target
 
@@ -641,10 +639,8 @@ class Unit(object):
      # ひとつの項目につき、複数のvalueをリスト(またはタプル)で指定可能
     # 複数の項目に対し、それぞれ複数のvalueを与える場合は2次元配列で指定する。
     # 複数の項目を指定した場合、全ての項目で示されるvalueを満たす物を返す
-    def find(self, titles, values):
+    def filter(self, titles, values):
         '''
-        TODO: メソッド名をfilterに変更する。
-
         項目と要素を指定することで、当てはまる教材をself.text_listから検索しインデックスを返す。
         複数の項目をリストやタプルで選択可能。複数の項目について指定した場合、全ての条件を満たすTextのインデックスを返す。
         それぞれ、複数の要素で検索することも可能。この場合はどちらかの要素を持つTextのインデックスを返す。
