@@ -113,10 +113,8 @@ class Text(object):
         self.url = url      
         self.target = target
 
-    def show(self, titles=None, width=None, separate_with_line=False):
+    def export(self, titles=None, width=None, separate_with_line=False):
         '''
-        TODO: メソッド名をexportに変更する。
-
         Textの保持する情報を一行の文字列にまとめ、返す。
 
         Parameters
@@ -306,16 +304,9 @@ class Text(object):
                 "file_name": self.file_name,
                 None: None}
 
-        item = dict[title]
+        item = '' if dict[title] is None else dict[title]
 
-        if item is None:
-            item = ''
-        else:
-            pass
-
-        if width is None:
-            pass
-        else:
+        if width is not None:
             item = ljust_zen(string=item, word_count=width)   # 文字列長の調節
         
         return item
@@ -340,34 +331,20 @@ class TitleNames(Text):
     def set_titles(self, name=None, unit=None, thema=None, teachers=None, date=None, period=None, url=None, target=None, lesson_type=None, course=None, upload_date=None, end_date=None, explanations=None, file_name=None):
         '''項目名を設定する。'''
 
-        if name is not None:
-            self.name = name
-        if unit is not None:
-            self.unit = unit
-        if thema is not None:
-            self.thema = thema
-        if teachers is not None:
-            self.teachers= teachers
-        if date is not None:
-            self.date = date
-        if period is not None:
-            self.period = period
-        if url is not None:
-            self.url = url
-        if target is not None:
-            self.target = target
-        if lesson_type is not None:
-            self.lesson_type = lesson_type
-        if course is not None:
-            self.course = course
-        if upload_date is not None:
-            self.upload_date = upload_date
-        if end_date is not None:
-            self.end_date = end_date
-        if explanations is not None:
-            self.explanations = explanations
-        if file_name is not None:
-            self.file_name = file_name
+        if name is not None: self.name = name
+        if unit is not None: self.unit = unit
+        if thema is not None: self.thema = thema
+        if teachers is not None: self.teachers= teachers
+        if date is not None: self.date = date
+        if period is not None: self.period = period
+        if url is not None: self.url = url
+        if target is not None: self.target = target
+        if lesson_type is not None: self.lesson_type = lesson_type
+        if course is not None: self.course = course
+        if upload_date is not None: self.upload_date = upload_date
+        if end_date is not None: self.end_date = end_date
+        if explanations is not None: self.explanations = explanations
+        if file_name is not None: self.file_name = file_name
         
     def get_title(self, title, width=None):
         '''
@@ -377,12 +354,8 @@ class TitleNames(Text):
         -----
         1) self.targetが指定されていない場合、空白を返す。
         '''
-
-        if self.target is None:
-            target_icon = ""
-        else:
-            target_icon = self.target
-
+        
+        target_icon = '' if self.target is None else self.target
         
         dict = {"name": self.name,
                 "unit": self.unit,
@@ -395,16 +368,9 @@ class TitleNames(Text):
                 "target": self.target,
                 None: ""}   # Noneの場合は空白
 
-        element = dict[title]
-        if element is None:
-            element = ''
-        else:
-            pass
+        element = '' if dict[title] is None else dict[title]
 
-        if width is None:
-            pass
-        else:
-            element = ljust_zen(string=element, word_count=width)
+        if width is not None: element = ljust_zen(string=element, word_count=width)
         
         return element
         
@@ -463,12 +429,10 @@ class Unit(object):
         for text in self.text_list:
             text.is_not_target()
     
-    def show(self, index=None, titles=None, width=None, show_title=True, separate_with_line=False):
+    def export(self, index=None, titles=None, width=None, show_item_names=True, separate_with_line=False):
         '''
-        TODO: メソッド名をexportに変更
-
         Textオブジェクトの保持する情報を行ごとにリストに格納する。
-        各行の内容はText.show()に依存する。
+        各行の内容はText.export()に依存する。
         
         Parameters
         ----------
@@ -479,7 +443,7 @@ class Unit(object):
         width : list, int or float. Default is None.
             項目ごとの文字列長を指定する。
             指定しなかった場合、各項目で最も文字列の長い要素の長さが基準となる。
-        show_title : bool. Default is True.
+        show_item_names : bool. Default is True.
             Trueの場合、一行目(配列の先頭)に項目名の行を追加する。
         separate_with_line : bool. Default is False.
             Trueの場合は、項目間を" | "で区切る。
@@ -546,7 +510,7 @@ class Unit(object):
 
             # title=Trueの場合self.text_listの先頭にself.title_namesを割り込ませる
             text_list_copy = copy.copy(self.text_list)
-            if show_title and (self.title_names is not None):
+            if show_item_names and (self.title_names is not None):
                 text_list_copy.insert(0, self.title_names)
                 # indexの要素全てに1を足し頭に0を加える
                 index = [i + 1 for i in index]
@@ -566,17 +530,15 @@ class Unit(object):
                     pass
                 
             for i in index:
-                line = text_list_copy[i].show(titles=titles, width=width, separate_with_line=separate_with_line)
+                line = text_list_copy[i].export(titles=titles, width=width, separate_with_line=separate_with_line)
                 lines.append(line)
         
         return lines
     
-    def print(self, index=None, titles=None, width=None, show_title=True, separate_with_line=False):
+    def show(self, index=None, titles=None, width=None, show_item_names=True, separate_with_line=False):
         '''
-        TODO: メソッド名をshowに変更
-
         Textオブジェクトの保持する情報を行ごとに出力する。
-        出力内容はUnit.show()に依存する。
+        出力内容はUnit.export()に依存する。
         
         Parameters
         ----------
@@ -587,13 +549,13 @@ class Unit(object):
         width : list, int or float. Default is None.
             項目ごとの文字列長を指定する。
             指定しなかった場合、各項目で最も文字列の長い要素の長さが基準となる。
-        show_title : bool. Default is True.
+        show_item_names : bool. Default is True.
             Trueの場合、一行目に項目名の行を追加する。
         separate_with_line : bool. Default is False.
             Trueの場合は、項目間を" | "で区切る。
             Falseの場合は、項目間を"   "で区切る        
         '''
-        lines = self.show(index=index, titles=titles, width=width, show_title=show_title, separate_with_line=separate_with_line)
+        lines = self.export(index=index, titles=titles, width=width, show_item_names=show_item_names, separate_with_line=separate_with_line)
 
         for line in lines:
             print(line)
@@ -897,17 +859,11 @@ class Scraper(object):
 
         '''
         # id, passwordが指定されていない場合はself.id, self.passwordを利用する。
-        # TODO: エラーメッセージを廃止、例外を返す(raise)。
-        #       https://getpocket.com/read/2772745088を参考にすること。
         if id is not None:
             self.id = id
-        else:
-            pass
 
         if password is not None:
             self.password = password
-        else:
-            pass
 
         if session is not None:
             self.session = session
@@ -1086,7 +1042,6 @@ class Scraper(object):
                 'strSelectGakubuNen': faculty + "," + grade
             }
 
-            self.log.log(message)
 
             timetable_page = self.session.post(url=TIMETABLE_URL, data=form, verify=False)
             timetable_page.encoding = 'cp932'
@@ -1408,7 +1363,7 @@ class Logger(object):
         ログに関するメッセージ。改行は非推奨。
     arc : list
         過去のログを保持する。
-        saveメソッドで保存するたびにクリアする。
+        storeメソッドで保存するたびにクリアする。
         最新のログも保持する。
     '''
     def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None):
@@ -1527,9 +1482,8 @@ class Logger(object):
         logger_tmp = Logger(path=None, status=status, date=date, time=time, message=message, archive=None)
         self.archive.append(logger_tmp)
 
-    def save(self, path=None, clear=True):
+    def store(self, path=None, clear=True):
         '''
-        TODO: メソッド名をstoreに変更する。
         self.archiveにあるログをファイルに保存する。
         指定したファイルが既に存在する場合、末尾に追加する。
         
@@ -1545,9 +1499,9 @@ class Logger(object):
             path = self.path
         
         with open(path, mode='a') as f:
-            f.write(self.show(clear=clear))
+            f.write(self.export(clear=clear))
 
-    def show(self, clear=False, newline=True, aslist=False):
+    def export(self, clear=False, newline=True, aslist=False):
         '''
         self.archiveにあるログを書式を整えて1行ごとに格納したリストもしくは一連の文字列で返す。
         
@@ -1591,7 +1545,7 @@ class Logger(object):
         
         return lines
     
-    def print(self, clear=False):
+    def show(self, clear=False):
         '''
         self.archiveの内容を標準出力する。
         
@@ -1600,7 +1554,7 @@ class Logger(object):
         clear : bool. default is False.
             Trueを指定した場合は出力後、self.archiveの内容を削除する。
         '''
-        lines = self.show(clear=clear, newline=False, aslist=True)
+        lines = self.export(clear=clear, newline=False, aslist=True)
         for line in lines:
             print(line)
 
@@ -1689,7 +1643,7 @@ def main():
 
     titles = ["unit", "thema", "date", "period", "target", "lesson_type", "course", "file_name", "upload_date"]
 
-    for line in today.show(titles=titles, separate_with_line=True):
+    for line in today.export(titles=titles, separate_with_line=True):
         print(line)
     
     SAVE_DIR = ""
