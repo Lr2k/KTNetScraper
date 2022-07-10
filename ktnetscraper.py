@@ -904,7 +904,7 @@ class Scraper(object):
         response_login.encoding = 'cp932'
 
         if "ログインに失敗しました。" in response_login.text:
-            self.log.log(status=1, message="ログインに失敗 ID:" + self.id)
+            self.log.log(status=1, message="ログインに失敗しました。 ID:" + self.id + " PassWord:" + '*'*len(self.password))
             raise WrongIdPassError
         else:
             pass
@@ -1057,7 +1057,7 @@ class Scraper(object):
             timetable_text = timetable_page.text.replace('\n', '')
 
             if "この日に講義はありません" in timetable_text:
-                message = "教材なし 授業日:" + date[0:4] + "/" + date[4:6] + "/" + date[6:8]
+                message = "時間割が存在しません。(" + date[0:4] + "/" + date[4:6] + "/" + date[6:8] + ")"
                 self.log.log(status=0, message = message)
                 pass
 
@@ -1075,11 +1075,12 @@ class Scraper(object):
                     dl_page_url_list.append(dl_page_url)
                     year_list.append(date[0:4])
 
-                    message = date[0:4] + "/" + date[4:6] + "/" + date[6:8] + "の時間割ページからダウンロードページのURL(" + dl_page_url + ")を取得。"
+                    message = date[0:4] + "/" + date[4:6] + "/" + date[6:8] + "の時間割ページからダウンロードページのURL(" + dl_page_url + ")を取得しました。"
                     self.log.log(status=0, message=message)
                 
             else:
-                pass
+                message = "教材が見つかりませんでした。(" + date[0:4] + "/" + date[4:6] + "/" + date[6:8] + ")"
+                self.log.log(status=0, message=message)
         
         if return_year:
             return dl_page_url_list, year_list
@@ -1121,10 +1122,17 @@ class Scraper(object):
         else:
             pass
 
+        
+
         text_list = list()
         for i in range(len(dl_page_url)):
             url = dl_page_url[i]
             _year = year[i]
+
+            # Log
+            message = "ダウンロードページ(" + url + ")から教材情報を取得します。"
+            self.log.log(status=0, message=message)
+            kinds_of_value = list()
 
             # textの初期化
             text = Text()
@@ -1177,6 +1185,9 @@ class Scraper(object):
 
                     text.url = dl_url
                     text.file_name = file_name
+
+                    kinds_of_value.append("ダウンロードURL").append("ファイル名")
+
                 elif "ユニ" in title:
                     # ユニット名
                     # element を再度抽出
@@ -1189,34 +1200,73 @@ class Scraper(object):
                     text.unit_num = unit_num
                     text.date = _year + date
                     text.period = period
+
+                    kinds_of_value.append("ユニット名・回").append("授業日程")
+
                 elif "区分" in title:
                     # 区分
                     text.lesson_type = element
+
+                    kinds_of_value.append("区分")
+
                 elif "講義" in title:
                     # 講義・実習内容
                     text.thema = element
+
+                    kinds_of_value.append("講義・実習内容")
+
                 elif "講座" in title:
                     # 講座名
                     text.course = element
+
+                    kinds_of_value.append("講座名")
+
                 elif "担当" in title:
                     # 担当教員
                     text.teachers= element
+                    
+                    kinds_of_value.append("担当教員")
+
                 elif "公開開始日" == title:
                     # 公開開始日
                     text.upload_date = element.split()[0].replace('/', '')
+
+                    kinds_of_value.append("公開開始日")
+
                 elif "公開終了日" == title:
                     # 公開終了日
                     text.end_date = element.split()[0].replace('/', '')
+
+                    kinds_of_value.append("公開終了日")
+
                 elif "教材・資料名" == title:
                     # 教材・資料名
                     text.name = element
+
+                    kinds_of_value.append("教材・資料名")
+                
                 elif "教材・資料の説明" == title:
                     # 教材・資料の説明
                     text.explanations = element
+
+                    kinds_of_value.append("教材・資料の説明")
+
                 else:
                     pass
 
             text_list.append(text)
+
+            message = ""
+            len_kinds_of_value = len(kinds_of_value)
+            for i in range(len_kinds_of_value):
+                kind = kinds_of_value[i]
+                if i != len_kinds_of_value - 1:
+                    message += ("'" + kind +"', ")
+                else:
+                    message += ("'" + kind +"'に関する情報を取得しました。")
+            
+            if message == "":
+                message = "教材に関する情報を取得できませんでした。(" + url + ")"
             
         return text_list
     
@@ -1308,24 +1358,37 @@ class Scraper(object):
 
                 _save_path = os.path.join(_save_dir, _file_name)
 
+                message = _file_name + "をダウンロードします。(" + _text + ")"
+                self.log.log(status=0, message=message)
+
                 count = 0
                 limit = 5   # ５回チャレンジ
                 while True:
                     count += 1
                     try:
                         data = self.session.get(_text, verify=False).content
-                        
+                        message = _file_name + "のダウンロードに成功しました。"
+                        self.log.log(status=0, message=message)
+
+                        message = _file_name + "を保存します。(" + _save_path + ")"
+                        self.log.log(status=0, message=message)
+
                         with open(_save_path, mode='wb') as f:
                             # バイナリ書き込みモード
                             f.write(data)
+                            message = _file_name + "の保存に成功しました。"
+                            self.log.log(status=0, message=message)
                         break
                     except Exception as e:
                         if count >= limit:
                             failed.append(i)
+                            message = _file_name + "のダウンロード・保存に失敗しました。(" + str(i) + "):" + e 
+                            self.log.log(status=2, message=message)
                             break
                         else:
+                            message = _file_name + "のダウンロード・保存に失敗しました。(" + str(i) + "):" + e
+                            self.log.log(status=2, message=message)
                             pass
-
             return failed
 
         else:
@@ -1338,6 +1401,9 @@ class Scraper(object):
                     if _text.target == False:
                         continue
                 
+                message = _text + "からファイルをダウンロードします。(" + _text + ")"
+                self.log.log(status=0, message=message)
+                
                 count = 0
                 limit = 5   # ５回チャレンジ
 
@@ -1345,12 +1411,18 @@ class Scraper(object):
                     count += 1
                     try:
                         data = self.session.get(_text, verify=False).content
+                        message = _file_name + "から、ファイルのダウンロードに成功しました。"
+                        self.log.log(status=0, message=message)
                         break
                     except:
                         if count >= limit:
                             data = None
+                            message = _file_name + "から、ファイルのダウンロードに失敗しました。(" + str(i) + "):" + e
+                            self.log.log(status=2, message=message)
                             break
                         else:
+                            message = _file_name + "から、ファイルのダウンロードに失敗しました。(" + str(i) + "):" + e
+                            self.log.log(status=2, message=message)
                             pass  
                 
                 data_list.append(data)
