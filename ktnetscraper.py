@@ -233,8 +233,6 @@ class Text(object):
         url = self.url if self.target else None
         
         return url
-
-        '''-------------------ここまで3項式適用------------------------'''
     
     def is_target(self):
         '''ダウンロード対象に指定する。'''
@@ -810,7 +808,7 @@ class Scraper(object):
     
     Attributes
     ----------
-    session : requests.Session
+    session : requests.Session()
         Sessionクラス。
     id : str
         学籍番号。ハイフンを含む。
@@ -821,7 +819,22 @@ class Scraper(object):
     grade : str
         学年。一桁の半角数字。1年の場合は"1"。
     '''
-    def __init__(self, session=None, id=None, password=None, faculty=None, grade=None):
+    def __init__(self, session=None, id=None, password=None, faculty=None, grade=None, logging=True):
+        '''
+        Parameters
+        ----------
+        logging : bool
+            Trueの場合、Logクラスによりログを残す。
+        session : requests.Session()
+            Sessionクラス。
+        id : str
+            学籍番号。ハイフンを含む。
+        password : str
+            サイトログイン用のパスワード
+        faculty : str
+            学部。医学部の場合は"M"。看護学部の場合は"N"。大文字のみ。
+        grade : str
+            学年。一桁の半角数字。1年の場合は"1"。'''
 
         self.session = session
         self.id = id
@@ -1062,8 +1075,8 @@ class Scraper(object):
                     dl_page_url_list.append(dl_page_url)
                     year_list.append(date[0:4])
 
-                    message = 
-                    self.log.log()
+                    message = date[0:4] + "/" + date[4:6] + "/" + date[6:8] + "の時間割ページからダウンロードページのURL(" + dl_page_url + ")を取得。"
+                    self.log.log(status=0, message=message)
                 
             else:
                 pass
@@ -1369,15 +1382,24 @@ class Logger(object):
         storeメソッドで保存するたびにクリアする。
         最新のログも保持する。
     '''
-    def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None):
+    def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None, logging=True, print=False):
+        '''
+        Parameters
+        ----------
+        logging : bool
+            Trueの場合、logメソッドを有効化する。
+        print : bool. Default is False.
+            Trueの場合、logメソッド実行時にmessageを標準出力する。
+        '''
         self.path = path
         self.status = status
         self.date = date
         self.time = time
         self.message = message
         self.archive = archive if archive is not None else list()
-    
-    def log(self, status=0, date=None, time=None, message=None):
+        self.logging = logging
+        self.print = print
+    def log(self, status=0, date=None, time=None, message='', print=True):
         '''
         ログを保持し、self.archiveの末尾に加える。
         前回のログは削除される。
@@ -1403,8 +1425,15 @@ class Logger(object):
             datetimeオブジェクトで指定可能。
         message : str
             メッセージを指定する。改行は取り除かれる。
-            文頭に'n@'がある場合は改行を取り除かない。        
+            文頭に'n@'がある場合は改行を取り除かない。
+        print : bool or NoneType. Default is None.
+            Trueの場合、messageを標準出力する。
+            指定がない(print=None)場合、self.printの設定が適用される。      
         '''
+        if self.logging == False:
+            # logメソッドの無効化
+            return
+
         # statusに関する処理
         if type(status)==str:
             status.strip()
@@ -1485,6 +1514,15 @@ class Logger(object):
         logger_tmp = Logger(path=None, status=status, date=date, time=time, message=message, archive=None)
         self.archive.append(logger_tmp)
 
+        if print is None:
+            print = self.print
+        
+        line = self.export_latest()
+        if print:
+            print(line)
+        else:
+            return line
+
     def store(self, path=None, clear=True):
         '''
         self.archiveにあるログをファイルに保存する。
@@ -1548,6 +1586,15 @@ class Logger(object):
         
         return lines
     
+    def export_latest(self):
+        date = self.date + ' ' if self.date is not None else ''
+        time = self.time + ' ' if self.time is not None else ''
+        status = self.status + ' ' if self.status is not None else ''
+        message = self.message if self.message is not None else ''
+
+        line = date + time + status + message
+        return line
+
     def show(self, clear=False):
         '''
         self.archiveの内容を標準出力する。
