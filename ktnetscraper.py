@@ -17,6 +17,7 @@ class WrongIdPassError(Exception):
     '''学籍番号またはパスワードが間違っていることを知らせる例外クラス。'''
     pass
 
+
 class Text(object):
     '''
     教材(レジュメ)の情報に関する情報を保持し、それらの情報を操作するメソッドを持つ。
@@ -61,6 +62,7 @@ class Text(object):
         ダウンロードする対象の場合はTrue、ダウンロードしない対象の場合はFalse。
 
     '''
+
     def __init__(self, name=None, unit=None, unit_num=None, thema=None, teachers=None, date=None, period=None, url=None, lesson_type=None, course=None, upload_date=None, end_date=None, explanations=None, file_name=None, target=True):
         '''
         Parameters
@@ -819,6 +821,7 @@ class Scraper(object):
     grade : str
         学年。一桁の半角数字。1年の場合は"1"。
     '''
+
     def __init__(self, session=None, id=None, password=None, faculty=None, grade=None, logging=True):
         '''
         Parameters
@@ -1086,7 +1089,6 @@ class Scraper(object):
             return dl_page_url_list, year_list
         else:
             return dl_page_url_list
-
     
     def get_text_info(self, dl_page_url, year="????"):
         '''
@@ -1449,11 +1451,12 @@ class Logger(object):
         ログに付属する時間情報。24時間表記 'HH:MM:SS'
     message : str
         ログに関するメッセージ。改行は非推奨。
-    arc : list
+    archive : list
         過去のログを保持する。
         storeメソッドで保存するたびにクリアする。
         最新のログも保持する。
     '''
+
     def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None, logging=True, print=False):
         '''
         Parameters
@@ -1471,6 +1474,7 @@ class Logger(object):
         self.archive = archive if archive is not None else list()
         self.logging = logging
         self.print = print
+
     def log(self, status=0, date=None, time=None, message='', print=True):
         '''
         ログを保持し、self.archiveの末尾に加える。
