@@ -1677,7 +1677,7 @@ class Logger(object):
         self.archiveの中身を削除する。
         '''
         self.archive = list()
-        
+
 
 def len_sepa(string):
     # 半角を1、全角を2として文字列の長さをカウントする。
