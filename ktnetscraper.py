@@ -1754,6 +1754,7 @@ def rjust_zen(string, word_count, emmbeding_letter=' '):
 # 以下、サンプルコード。
 def main():
     import getpass
+    
     ID = input("StudentID: ")
     Pass = getpass.getpass("Password: ")
     scraper = Scraper(id=ID, password=Pass, faculty="M", grade="4")
