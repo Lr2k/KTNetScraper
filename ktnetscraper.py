@@ -1113,7 +1113,6 @@ class Scraper(object):
         1) 授業日(date)や時限(period)に関する情報は取得できないため、引数で指定する必要がある。
         '''
         
-        # str型でも受け取れるようにする
         if type(dl_page_url) == str:
             dl_page_url = [dl_page_url]
         else:
@@ -1124,19 +1123,15 @@ class Scraper(object):
         else:
             pass
 
-        
-
         text_list = list()
         for i in range(len(dl_page_url)):
             url = dl_page_url[i]
             _year = year[i]
 
-            # Log
             message = "ダウンロードページ(" + url + ")から教材情報を取得します。"
             self.log.log(status=0, message=message)
             kinds_of_value = list()
 
-            # textの初期化
             text = Text()
 
             if (url[1]==':') or (url[0]=='.'):
@@ -1148,7 +1143,6 @@ class Scraper(object):
                 info_page = self.session.get(url, verify=False)
                 info_page.encoding = 'cp932'
                 info_text = info_page.text.replace('\n', '')
-
 
             # '●'を目印に項目名を探す。
             points = re.finditer("●", info_text)
@@ -1191,8 +1185,6 @@ class Scraper(object):
                     kinds_of_value.append("ダウンロードURL").append("ファイル名")
 
                 elif "ユニ" in title:
-                    # ユニット名
-                    # element を再度抽出
                     # ユニット名、回数、日付、時間を含むものに置き換える
                     unit = set[br_position[0]+6:br_position[1]].strip()
                     unit_num = set[br_position[1]+6:br_position[2]].strip()[1:3]
@@ -1272,7 +1264,6 @@ class Scraper(object):
             
         return text_list
     
-
     def dl(self, text, save_dir=None, file_name=None, save=True):
         '''
         ダウンロード用のURLからファイルをダウンロードする。
@@ -1308,14 +1299,12 @@ class Scraper(object):
         # text, save_dir, file_nameはそれぞれの要素が１対１対１で対応するように
         # 指定のない項目については "" を指定する。
 
-        # 単体のものをリストに格納する。ただしUnitオブジェクトはUnit.text_listを展開する。
         if type(text).__name__ in ('str', 'Text'):
             text = [text]
         elif type(text).__name__ == 'Unit':
             text = text.text_list
         
-        if save == True:
-            # ファイルを保存する場合
+        if save:
             if type(save_dir).__name__ in ('str', 'NoneType'):
                 save_dir = [save_dir]
             if len(save_dir)==1:
@@ -1326,7 +1315,6 @@ class Scraper(object):
 
             # ダウンロードに失敗した教材のindexを格納
             failed = list()
-            # 各要素ごとにダウンロードを実行
               
             for i in range(len(text)):
                 _text = text[i]
