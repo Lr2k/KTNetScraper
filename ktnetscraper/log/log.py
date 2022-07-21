@@ -74,6 +74,8 @@ class Logger(object):
             Trueの場合、messageを標準出力する。
             指定がない(show=None)場合、self.showの設定が適用される。      
         '''
+        message = str(message)
+
         if self.enable_logging == False:
             # logメソッドの無効化
             return
