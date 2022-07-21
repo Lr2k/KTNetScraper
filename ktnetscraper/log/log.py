@@ -25,13 +25,13 @@ class Logger(object):
         最新のログも保持する。
     '''
 
-    def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None, logging=True, print=False):
+    def __init__(self, path='log.txt', status=None, date=None, time=None, message=None, archive=None, enable_logging=True, show=False):
         '''
         Parameters
         ----------
-        logging : bool
+        enable_logging : bool
             Trueの場合、logメソッドを有効化する。
-        print : bool. Default is False.
+        show : bool. Default is False.
             Trueの場合、logメソッド実行時にmessageを標準出力する。
         '''
         self.path = path
@@ -40,10 +40,10 @@ class Logger(object):
         self.time = time
         self.message = message
         self.archive = archive if archive is not None else list()
-        self.logging = logging
-        self.print = print
+        self.enable_logging = enable_logging
+        self.show = show
 
-    def log(self, status=0, date=None, time=None, message='', print=True):
+    def log(self, status=0, date=None, time=None, message='', show=None):
         '''
         ログを保持し、self.archiveの末尾に加える。
         前回のログは削除される。
@@ -70,11 +70,11 @@ class Logger(object):
         message : str
             メッセージを指定する。改行は取り除かれる。
             文頭に'n@'がある場合は改行を取り除かない。
-        print : bool or NoneType. Default is None.
+        show : bool or NoneType. Default is None.
             Trueの場合、messageを標準出力する。
-            指定がない(print=None)場合、self.printの設定が適用される。      
+            指定がない(show=None)場合、self.showの設定が適用される。      
         '''
-        if self.logging == False:
+        if self.enable_logging == False:
             # logメソッドの無効化
             return
 
@@ -158,11 +158,11 @@ class Logger(object):
         logger_tmp = Logger(path=None, status=status, date=date, time=time, message=message, archive=None)
         self.archive.append(logger_tmp)
 
-        if print is None:
-            print = self.print
+        if show is None:
+            show = self.show
         
         line = self.export_latest()
-        if print:
+        if show:
             print(line)
         else:
             return line
