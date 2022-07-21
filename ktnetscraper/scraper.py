@@ -130,6 +130,10 @@ class Scraper(object):
         '''
         学籍番号から学部を推測する。
         
+        TODO: メソッド名をconfirm_faculty_gradeに変更。
+              時間割ページの情報から確認する方法に変更。
+              calc_facultyとcalc_gradeを統合。
+
         Parameters
         ----------
         id : str. Default is None.
