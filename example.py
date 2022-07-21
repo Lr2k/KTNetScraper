@@ -9,7 +9,6 @@ scraper.calc_faculty()
 scraper.calc_grade()
 
 require_grade = False
-
 while True:
     print("学年は" + scraper.grade + "ですか？ [Y/n]")
     answer = input().strip()
@@ -32,8 +31,7 @@ try:
     scraper.login()
     scraper.log.store()
 except Exception as e:
-    print(e)
-    scraper.log.log(status=1, message=e)
+    scraper.log.log(status=1, message=e, show=True)
     scraper.log.store()
     exit()
 
@@ -43,8 +41,7 @@ try:
     dl_page_url, year_list = scraper.get_dlpage_url(date, return_year=True)
     scraper.log.store()
 except Exception as e:
-    print(e)
-    scraper.log.log(status=1, message=e)
+    scraper.log.log(status=1, message=e, show=True)
     scraper.log.store()
     exit()
 
@@ -52,8 +49,7 @@ try:
     unit = kt.data_structures.Unit(scraper.get_text_info(dl_page_url, year_list))
     scraper.log.store()
 except Exception as e:
-    print(e)
-    scraper.log.log(status=1, message=e)
+    scraper.log.log(status=1, message=e, show=True)
     scraper.log.store()
     exit()
 
@@ -68,7 +64,6 @@ try:
     scraper.dl(unit, save_dir=SAVE_DIR)
     scraper.log.store()
 except Exception as e:
-    print(e)
-    scraper.log.log(status=1, message=e)
+    scraper.log.log(status=1, message=e, show=True)
     scraper.log.store()
     exit()
