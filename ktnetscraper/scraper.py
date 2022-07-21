@@ -36,7 +36,7 @@ class Scraper(object):
         学年。一桁の半角数字。1年の場合は"1"。
     '''
 
-    def __init__(self, session=None, id=None, password=None, faculty=None, grade=None, logging=True):
+    def __init__(self, session=None, id=None, password=None, faculty=None, grade=None, log=True, enable_logging=True, show_log=False):
         '''
         Parameters
         ----------
@@ -60,7 +60,7 @@ class Scraper(object):
         self.grade = grade
 
         #loggerの初期化
-        self.log = log.Logger(path='scraper.log')    
+        self.log = Logger(path='scraper.log', enable_logging=enable_logging, show=show_log)    
 
     def login(self, id=None, password=None, session=None):
         '''
@@ -300,7 +300,7 @@ class Scraper(object):
                 self.log.log(status=0, message=message)
         
         if return_year:
-            return dl_page_url_list, year_list
+            return (dl_page_url_list, year_list)
         else:
             return dl_page_url_list
     
@@ -396,7 +396,8 @@ class Scraper(object):
                     text.url = dl_url
                     text.file_name = file_name
 
-                    kinds_of_value.append("ダウンロードURL").append("ファイル名")
+                    kinds_of_value.append("ダウンロードURL")
+                    kinds_of_value.append("ファイル名")
 
                 elif "ユニ" in title:
                     # ユニット名、回数、日付、時間を含むものに置き換える
@@ -409,7 +410,8 @@ class Scraper(object):
                     text.date = _year + date
                     text.period = period
 
-                    kinds_of_value.append("ユニット名・回").append("授業日程")
+                    kinds_of_value.append("ユニット名・回")
+                    kinds_of_value.append("授業日程")
 
                 elif "区分" in title:
                     # 区分
@@ -557,7 +559,9 @@ class Scraper(object):
                     _save_dir = ('')
                     
                 # ディレクトリの存在確認・作成
-                if not os.path.exists(_save_dir):
+                if _save_dir=='':
+                    pass
+                elif not os.path.exists(_save_dir):
                     os.makedirs(_save_dir)
 
                 _save_path = os.path.join(_save_dir, _file_name)
@@ -632,32 +636,3 @@ class Scraper(object):
                 data_list.append(data)
             
             return data_list
-
-
-
-# 以下、サンプルコード。
-def main():
-    import getpass
-    
-    ID = input("StudentID: ")
-    Pass = getpass.getpass("Password: ")
-    scraper = Scraper(id=ID, password=Pass, faculty="M", grade="4")
-
-    scraper.login()
-    date = ["20220602", "20220603"]
-    dl_page_url, year_list = scraper.get_dlpage_url(date)
-    today = Unit(scraper.get_text_info(dl_page_url, year_list))
-
-    titles = ["unit", "thema", "date", "period", "target", "lesson_type", "course", "file_name", "upload_date"]
-
-    for line in today.export(titles=titles, separate_with_line=True):
-        print(line)
-    
-    SAVE_DIR = ""
-    datalist = scraper.dl(today, save_dir=SAVE_DIR)
-
-    for data in datalist:
-        print(type(data))
-
-if __name__=='__main__':
-    main()
