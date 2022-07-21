@@ -1,2 +1,2 @@
 from .scraper import Scraper
-from . import data_structure
+from . import data_structures
