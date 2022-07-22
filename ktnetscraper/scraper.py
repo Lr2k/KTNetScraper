@@ -222,7 +222,7 @@ class Scraper(object):
         
         Parameters
         ----------
-        date_list : list, tuple, str or int
+        date_list : int, str, datetime.datetime, datetime.date, list or tuple .
             日付。複数の日付を指定する場合はリストやタプルに格納する。
             "YYYYMMDD"の形式で渡す。
         faculty : str. Default is None:
@@ -230,7 +230,7 @@ class Scraper(object):
         grade : str
             学年。指定がない場合はself.gradeを用いる。
         session : requests.Session
-            Sessionクラス。指定がない場合はself.sessionを用いる。
+            Sessionオブジェクト。指定がない場合はself.sessionを用いる。
         return_year : bool. Default is False.
             Trueを指定した場合、授業が行われる年を格納したリストを返す。
 
@@ -243,11 +243,9 @@ class Scraper(object):
         '''
         # date_listはリスト型もしくはstr型でうけとる
         # 日付の指定は"YYYYMMDD"
-        if type(date_list) in (str, int):
+        if type(date_list) not in (list, tuple):
             single = True
-            date_list = [str(date_list)]
-        else:
-            pass
+            date_list = [date_list]
 
         if faculty is None:
             faculty = self.faculty
@@ -263,15 +261,17 @@ class Scraper(object):
         dl_page_url_list = list()
         year_list = list()
         for date in date_list:
-            date = str(date)
-
+            if type(date) == int:
+                date = str(date)
+            elif type(date).__name__ in ('datetime', 'date'):
+                date = "{:0>4}{:0>2}{:0>2}".format(date.year, date.month, date.day)
+            
             form = {
                 'intSelectYear':date[0:4],
                 'intSelectMonth':date[4:6],
                 'intSelectDay':date[6:8],
                 'strSelectGakubuNen': faculty + "," + grade
             }
-
 
             timetable_page = self.session.post(url=TIMETABLE_URL, data=form, verify=False)
             timetable_page.encoding = 'cp932'
