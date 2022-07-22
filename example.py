@@ -1,4 +1,3 @@
-from email import message
 import ktnetscraper as kt
 
 import os
