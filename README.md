@@ -4,7 +4,7 @@
 
 ## Requirement
 
-**python3.10**
+**python3.10** (他のバージョンでは検証していません。)
 
 ライブラリ：**requests**, **BeautifulSoup4**
 
