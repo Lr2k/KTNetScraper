@@ -47,7 +47,7 @@
 
 ## Note
 
-詳しい使用方法はdocstringを確認
+詳しい仕様はdocstringを確認
 
 ## Author
 
