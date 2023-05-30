@@ -4,7 +4,7 @@
 
 ## Requirement
 
-**python3.10**
+**python3.10** (他のバージョンでは検証していません。)
 
 ライブラリ：**requests**, **BeautifulSoup4**
 
@@ -47,7 +47,7 @@
 
 ## Note
 
-詳しい使用方法はdocstringを確認
+詳しい仕様はdocstringを確認
 
 ## Author
 
