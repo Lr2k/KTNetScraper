@@ -26,3 +26,6 @@
 
 2. docstringの修正 -> feature/refine-docstring
     1. scraper.Scraper/Attributesのsessionのクラスをrequests.Sessionに修正
+
+3. readmeの修正 -> feature/refine-readmme
+    1. dateで指定可能な形式/型について、もう少し詳細に解説する。
