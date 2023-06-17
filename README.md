@@ -21,11 +21,11 @@
 
 **2. 日付を指定し、教材情報を取得**
 
-`datetime.date` `datetime.datetime` `(YYYY,MM,DD)` `[YYYY,MM,DD]` の内、いずれかの形式で教材情報を参照する日付を指定する。
+　`datetime.date` `datetime.datetime` `(YYYY,MM,DD)` `[YYYY,MM,DD]` の内、いずれかの形式で教材情報を参照する日付を指定する。
 
     infos : tuple[dict] = scraper.fetch_handout_infos(date)
 
-教材情報はdictに格納されており、各項目に対応するkeyとvalueのクラスは以下の通り
+　教材情報はdictに格納されており、各項目に対応するkeyとvalueのクラスは以下の通り
 
 * "unit" : `str` ユニット名 
 * "unit_num" : `str` ユニットの何回目の講義か
