@@ -24,8 +24,9 @@
             
     ※設定項目の重複や優先度の違いは検討中。開発ノートを確認。
 
-2. docstringの修正 -> feature/refine-docstring
+2. docstringの修正 -> develop
     1. scraper.Scraper/Attributesのsessionのクラスをrequests.Sessionに修正
+    2. scraper.Scraper.post/getの例外一覧を削除。requestsの例外の為
 
 3. readmeの修正 -> feature/refine-readmme
     1. dateで指定可能な形式/型について、もう少し詳細に解説する。
