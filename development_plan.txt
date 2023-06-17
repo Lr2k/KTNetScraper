@@ -26,7 +26,7 @@
 
 2. docstringの修正 -> develop
     1. scraper.Scraper/Attributesのsessionのクラスをrequests.Sessionに修正
-    2. scraper.Scraper.post/getの例外一覧を削除。requestsの例外の為
+    2. scraper.Scraper.post/getの例外一覧を削除。
 
-3. readmeの修正 -> feature/refine-readmme
+3. readmeの修正 -> feature/refine-readme
     1. dateで指定可能な形式/型について、もう少し詳細に解説する。
