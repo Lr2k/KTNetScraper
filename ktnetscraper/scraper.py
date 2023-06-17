@@ -67,6 +67,13 @@ class Scraper(object):
         プロキシサーバーを経由しアクセスする設定。
     proxies : dict
         プロキシアドレス。requests.Session.get()の引数proxiesに準ずる。
+    interval : float
+        ウェブサーバーへの過剰な不可を防ぐためのインターバル(秒)。
+        アクセスを繰り返す場合は必ずインターバルを設定してください。
+    connect_timeout : float
+        接続にかける時間のリミット(秒)
+    read_timeout : float
+        接続後、読み込みにかける時間のリミット(秒)
     '''
     def __init__(self, session: rq.Session | None = None, enable_proxy: bool = False,
                  proxies: dict | None = None):
@@ -79,12 +86,19 @@ class Scraper(object):
             プロキシサーバーを経由しアクセスする設定。
         proxies : dict, optional
             プロキシアドレス。requests.Session.get()の引数proxiesに準ずる。
+        interval : float or int, default 2.0
+            ウェブサーバーへの過剰な不可を防ぐためのインターバル(秒)。
+            アクセスを繰り返す場合は必ずインターバルを設定してください。
+        connect_timeout : float or int, default 5.0
+            接続にかける時間のリミット(秒)
+        read_timeout : float or int, default 5.0
+            接続後、読み込みにかける時間のリミット(秒)
         '''
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
         self.enable_proxy = type_checked(enable_proxy, bool)
 
         self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
-  
+
     def post(self, encoding: str | None = None, remove_new_line: bool = False,
              **kwargs) -> str | rq.Response:
         '''
