@@ -140,7 +140,7 @@ class Scraper(object):
         else:
             kwargs["proxies"] = None
 
-        time.sleep(INTERVAL)
+        time.sleep(self.interval)
         response_data = self.session.post(**kwargs)
 
         if encoding is not None:
