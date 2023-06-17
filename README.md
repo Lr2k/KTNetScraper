@@ -20,6 +20,7 @@
     scraper.login(id, password)
 
 **2. 日付を指定し、教材情報を取得**
+
 `datetime.date` `datetime.datetime` `(YYYY, MM, DD)`のいずれかの形式で、
 教材情報を参照する日付を指定する。
 
