@@ -240,7 +240,7 @@ class Scraper(object):
         bool
             ログイン済みの場合はTrue、未ログインの場合はFalse。
         '''
-        response = self.get(url=MENU_URL, timeout=(_CONNECT_TIMEOUT, _READ_TIMEOUT),
+        response = self.get(url=MENU_URL, timeout=(self.connect_timeout, self.read_timeout),
                             verify=False, encoding=PAGE_CHARSET, remove_new_line=True)
 
         if "■メニュー" in response:
