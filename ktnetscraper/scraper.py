@@ -100,15 +100,15 @@ class Scraper(object):
         self.enable_proxy = type_checked(enable_proxy, bool)
         self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
 
-        self.interval = interval
+        self.interval = type_checked(interval, (float, int))
         
-        self.connect_timeout = connect_timeout
-        self.read_timeout = read_timeout
+        self.connect_timeout = type_checked(connect_timeout, (float, int))
+        self.read_timeout = type_checked(read_timeout, (float, int))
 
     def post(self, encoding: str | None = None, remove_new_line: bool = False,
              **kwargs) -> str | rq.Response:
         '''
-        requestsを用いたPostを行う。対象サイトに最適化したPostを行う。
+        requestsを用いたPostを行う。サイトに最適化したPostを行う。
         proxyと文字コード等の処理も行う。
 
         Parameters
