@@ -53,7 +53,7 @@
 
 ## Author
 
-[**Kikyo_Lr2k**](https://twitter.com/kikyo0870555)
+[**Kikyo**](https://twitter.com/kikyo0870555)
 
 ## License
 
