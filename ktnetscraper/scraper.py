@@ -28,15 +28,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 設定
 #==============================#
-# 接続にかける時間のリミット
-_CONNECT_TIMEOUT = 5.0 # (seconds)
-# 接続後、読み込みにかける時間のリミット
-_READ_TIMEOUT = 5.0 # (seconds)
-
-# インターバルの長さ
-# サーバーへの過剰な負荷を防ぐため、アクセスを繰り返す際はインターバルを挟んでください。
-INTERVAL = 3.0 # (seconds)
-
 # サイトのエンコードに適用する文字コード
 PAGE_CHARSET = 'cp932'
 
@@ -48,7 +39,7 @@ TIMETABLE_URL = 'https://kt.kanazawa-med.ac.jp/timetable/List_Timetable.php'
 DLPAGE_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 
 # プロキシサーバーのアドレスの初期値
-PROXIES = {
+_PROXIES = {
     'http' : 'http://proxy2.kanazawa-med.ac.jp:8080',
     'https' : 'http://proxy2.kanazawa-med.ac.jp:8080',
 }
@@ -67,9 +58,17 @@ class Scraper(object):
         プロキシサーバーを経由しアクセスする設定。
     proxies : dict
         プロキシアドレス。requests.Session.get()の引数proxiesに準ずる。
+    interval : float
+        ウェブサーバーへの過剰な不可を防ぐためのインターバル(秒)。
+        アクセスを繰り返す場合は必ずインターバルを設定してください。
+    connect_timeout : float
+        接続にかける時間のリミット(秒)
+    read_timeout : float
+        接続後、読み込みにかける時間のリミット(秒)
     '''
     def __init__(self, session: rq.Session | None = None, enable_proxy: bool = False,
-                 proxies: dict | None = None):
+                 proxies: dict | None = None, interval: float | int = 2.0,
+                 connect_timeout: float | int = 5.0, read_timeout: float | int = 5.0):
         '''
         Parameters
         ----------
@@ -79,16 +78,28 @@ class Scraper(object):
             プロキシサーバーを経由しアクセスする設定。
         proxies : dict, optional
             プロキシアドレス。requests.Session.get()の引数proxiesに準ずる。
+        interval : float or int, default 2.0
+            ウェブサーバーへの過剰な不可を防ぐためのインターバル(秒)。
+            アクセスを繰り返す場合は必ずインターバルを設定してください。
+        connect_timeout : float or int, default 5.0
+            接続にかける時間のリミット(秒)
+        read_timeout : float or int, default 5.0
+            接続後、読み込みにかける時間のリミット(秒)
         '''
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
-        self.enable_proxy = type_checked(enable_proxy, bool)
 
-        self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
-  
+        self.enable_proxy = type_checked(enable_proxy, bool)
+        self.proxies = _PROXIES if proxies is None else type_checked(proxies, dict)
+
+        self.interval = type_checked(interval, (float, int))
+        
+        self.connect_timeout = type_checked(connect_timeout, (float, int))
+        self.read_timeout = type_checked(read_timeout, (float, int))
+
     def post(self, encoding: str | None = None, remove_new_line: bool = False,
              **kwargs) -> str | rq.Response:
         '''
-        requestsを用いたPostを行う。対象サイトに最適化したPostを行う。
+        requestsを用いたPostを行う。サイトに最適化したPostを行う。
         proxyと文字コード等の処理も行う。
 
         Parameters
@@ -112,13 +123,6 @@ class Scraper(object):
         str or requests.Response
             encodingで文字コードを指定した場合は、エンコードした文字列を返す。
             encodingでNoneを指定した場合は、Responseオブジェクトを返す。
-
-        Raises
-        ------
-        requests.exceptions.ReadTimeout :
-            読み込み時間が既定の時間を超えた。
-        requests.exceptions.ConnectTimeout :
-            接続時間が既定の時間を超えた。
         '''
         encoding = type_checked(encoding, str, allow_none=True)
         remove_new_line = type_checked(remove_new_line, bool)
@@ -129,7 +133,7 @@ class Scraper(object):
         else:
             kwargs["proxies"] = None
 
-        time.sleep(INTERVAL)
+        time.sleep(self.interval)
         response_data = self.session.post(**kwargs)
 
         if encoding is not None:
@@ -167,13 +171,6 @@ class Scraper(object):
         str or requests.Response
             encodingで文字コードを指定した場合は、その文字コードでエンコードした文字列を返す。
             encodingでNoneを指定した場合は、Responseオブジェクトを返す。
-
-        Raises
-        ------ 
-        requests.exceptions.ReadTimeout :
-            読み込み時間が既定の時間を超えた。
-        requests.exceptions.ConnectTimeout :
-            接続時間が既定の時間を超えた。
         '''
         encoding = type_checked(encoding, str, allow_none=True)
         remove_new_line = type_checked(remove_new_line, bool)
@@ -184,7 +181,7 @@ class Scraper(object):
         else:
             kwargs["proxies"] = None
 
-        time.sleep(INTERVAL)
+        time.sleep(self.interval)
         response_data = self.session.get(**kwargs)
 
         if encoding is not None:
@@ -223,7 +220,7 @@ class Scraper(object):
             'strFromAddress': ""
             }
         response_login = self.post(url=LOGIN_URL, data=login_data, verify=False,
-                                   timeout=(_CONNECT_TIMEOUT, _READ_TIMEOUT),
+                                   timeout=(self.connect_timeout, self.read_timeout),
                                    encoding=PAGE_CHARSET)
         if "ログインに失敗しました。" in response_login:
             raise WrongIdPasswordException('学籍番号もしくはパスワードが違います。')
@@ -243,7 +240,7 @@ class Scraper(object):
         bool
             ログイン済みの場合はTrue、未ログインの場合はFalse。
         '''
-        response = self.get(url=MENU_URL, timeout=(_CONNECT_TIMEOUT, _READ_TIMEOUT),
+        response = self.get(url=MENU_URL, timeout=(self.connect_timeout, self.read_timeout),
                             verify=False, encoding=PAGE_CHARSET, remove_new_line=True)
 
         if "■メニュー" in response:
