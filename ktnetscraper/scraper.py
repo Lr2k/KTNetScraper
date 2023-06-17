@@ -28,15 +28,6 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # 設定
 #==============================#
-# 接続にかける時間のリミット
-_CONNECT_TIMEOUT = 5.0 # (seconds)
-# 接続後、読み込みにかける時間のリミット
-_READ_TIMEOUT = 5.0 # (seconds)
-
-# インターバルの長さ
-# サーバーへの過剰な負荷を防ぐため、アクセスを繰り返す際はインターバルを挟んでください。
-INTERVAL = 3.0 # (seconds)
-
 # サイトのエンコードに適用する文字コード
 PAGE_CHARSET = 'cp932'
 
@@ -48,7 +39,7 @@ TIMETABLE_URL = 'https://kt.kanazawa-med.ac.jp/timetable/List_Timetable.php'
 DLPAGE_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 
 # プロキシサーバーのアドレスの初期値
-PROXIES = {
+_PROXIES = {
     'http' : 'http://proxy2.kanazawa-med.ac.jp:8080',
     'https' : 'http://proxy2.kanazawa-med.ac.jp:8080',
 }
@@ -98,7 +89,7 @@ class Scraper(object):
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
 
         self.enable_proxy = type_checked(enable_proxy, bool)
-        self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
+        self.proxies = _PROXIES if proxies is None else type_checked(proxies, dict)
 
         self.interval = type_checked(interval, (float, int))
         
