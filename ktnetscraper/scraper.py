@@ -76,7 +76,8 @@ class Scraper(object):
         接続後、読み込みにかける時間のリミット(秒)
     '''
     def __init__(self, session: rq.Session | None = None, enable_proxy: bool = False,
-                 proxies: dict | None = None):
+                 proxies: dict | None = None, interval: float | int = 2.0,
+                 connect_timeout: float | int = 5.0, read_timeout: float | int = 5.0):
         '''
         Parameters
         ----------
@@ -95,9 +96,14 @@ class Scraper(object):
             接続後、読み込みにかける時間のリミット(秒)
         '''
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
-        self.enable_proxy = type_checked(enable_proxy, bool)
 
+        self.enable_proxy = type_checked(enable_proxy, bool)
         self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
+
+        self.interval = interval
+        
+        self.connect_timeout = connect_timeout
+        self.read_timeout = read_timeout
 
     def post(self, encoding: str | None = None, remove_new_line: bool = False,
              **kwargs) -> str | rq.Response:
