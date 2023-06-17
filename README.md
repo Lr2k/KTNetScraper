@@ -51,6 +51,10 @@
 
 詳しい仕様はdocstringを確認
 
+## Version
+
+1.0.1
+
 ## Author
 
 [**Kikyo**](https://twitter.com/kikyo0870555)
