@@ -21,7 +21,7 @@
 
 **2. 日付を指定し、教材情報を取得**
 
-`datetime.date` `datetime.datetime` `(YYYY,MM,DD)` `[YYYY,MM,DD]`のいずれかの形式で、教材情報を参照する日付を指定する。
+`datetime.date` `datetime.datetime` `(YYYY,MM,DD)` `[YYYY,MM,DD]` の内、いずれかの形式で教材情報を参照する日付を指定する。
 
     infos : tuple[dict] = scraper.fetch_handout_infos(date)
 
