@@ -52,7 +52,7 @@ class Scraper(object):
     
     Attributes
     ----------
-    session : requests.session.Session
+    session : requests.Session
         Sessionクラス。
     enable_proxy : bool
         プロキシサーバーを経由しアクセスする設定。
