@@ -220,7 +220,7 @@ class Scraper(object):
             'strFromAddress': ""
             }
         response_login = self.post(url=LOGIN_URL, data=login_data, verify=False,
-                                   timeout=(_CONNECT_TIMEOUT, _READ_TIMEOUT),
+                                   timeout=(self.connect_timeout, self.read_timeout),
                                    encoding=PAGE_CHARSET)
         if "ログインに失敗しました。" in response_login:
             raise WrongIdPasswordException('学籍番号もしくはパスワードが違います。')
