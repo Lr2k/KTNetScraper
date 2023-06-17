@@ -25,7 +25,7 @@
 
     infos : tuple[dict] = scraper.fetch_handout_infos(date)
 
-　教材情報はdictに格納されており、各項目に対応するkeyとvalueのクラスは以下の通り
+　教材情報はdictに格納されており、各項目に対応するkeyとvalueのクラスは以下の通り。
 
 * "unit" : `str` ユニット名 
 * "unit_num" : `str` ユニットの何回目の講義か
@@ -52,7 +52,6 @@
 詳しい仕様はdocstringを確認
 
 ## Author
-
 
 [**Kikyo_Lr2k**](https://twitter.com/kikyo0870555)
 
