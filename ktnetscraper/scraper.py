@@ -178,13 +178,6 @@ class Scraper(object):
         str or requests.Response
             encodingで文字コードを指定した場合は、その文字コードでエンコードした文字列を返す。
             encodingでNoneを指定した場合は、Responseオブジェクトを返す。
-
-        Raises
-        ------ 
-        requests.exceptions.ReadTimeout :
-            読み込み時間が既定の時間を超えた。
-        requests.exceptions.ConnectTimeout :
-            接続時間が既定の時間を超えた。
         '''
         encoding = type_checked(encoding, str, allow_none=True)
         remove_new_line = type_checked(remove_new_line, bool)
@@ -195,7 +188,7 @@ class Scraper(object):
         else:
             kwargs["proxies"] = None
 
-        time.sleep(INTERVAL)
+        time.sleep(self.interval)
         response_data = self.session.get(**kwargs)
 
         if encoding is not None:
