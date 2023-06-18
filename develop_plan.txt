@@ -2,3 +2,4 @@
 
 1. Change
     1-1. 定数 DL_URL_HEAD が設定項目に存在しない。
+    1-2. 定数 _PROXIES の名称を PROXIES に変更。
