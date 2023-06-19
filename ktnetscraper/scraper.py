@@ -46,7 +46,7 @@ PROXIES = {
 }
 #==============================#
 
-
+ 
 class Scraper(object):
     '''
     kt.kanazawa-med.ac.jpへのアクセス、ログイン状態の保持、教材情報の収集を行う。
