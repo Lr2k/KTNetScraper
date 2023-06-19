@@ -37,15 +37,16 @@ LOGIN_URL = 'https://kt.kanazawa-med.ac.jp/login/Check_Password.php'
 MENU_URL = 'https://kt.kanazawa-med.ac.jp/login/Menu.php?'
 TIMETABLE_URL = 'https://kt.kanazawa-med.ac.jp/timetable/List_Timetable.php'
 DLPAGE_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
+DL_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 
 # プロキシサーバーのアドレスの初期値
-_PROXIES = {
+PROXIES = {
     'http' : 'http://proxy2.kanazawa-med.ac.jp:8080',
     'https' : 'http://proxy2.kanazawa-med.ac.jp:8080',
 }
 #==============================#
 
-
+ 
 class Scraper(object):
     '''
     kt.kanazawa-med.ac.jpへのアクセス、ログイン状態の保持、教材情報の収集を行う。
@@ -89,7 +90,7 @@ class Scraper(object):
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
 
         self.enable_proxy = type_checked(enable_proxy, bool)
-        self.proxies = _PROXIES if proxies is None else type_checked(proxies, dict)
+        self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
 
         self.interval = type_checked(interval, (float, int))
         
@@ -466,7 +467,6 @@ class Scraper(object):
                 dl_link = BeautifulSoup(title, 'html.parser').select("a[href^='./Download']")[0]
 
                 dl_url_part = dl_link.get('href')
-                DL_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 
                 info_dict["url"] = DL_URL_HEAD + dl_url_part[1:]
                 info_dict["file_name"] = dl_link.getText()
