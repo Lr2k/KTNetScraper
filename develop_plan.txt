@@ -6,4 +6,4 @@
     1-3. getメソッドとpostメソッドをrequestメソッドに統合する。 -> refactor/request-methods
 
 2. Add
-    2-1. ReadmeにSSL認証を無視した通信を行うことに対する注意喚起を追加する。 -> refactor/add-readme-notes
+    2-1. ReadmeにSSL認証を無視した通信を行うことに対する注意喚起を追加する。 -> feature/add-readme-notes
