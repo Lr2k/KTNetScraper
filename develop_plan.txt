@@ -4,4 +4,6 @@
     1-1. 定数 DL_URL_HEAD が設定項目に存在しない。 -> refactor/constants
     1-2. 定数 _PROXIES の名称を PROXIES に変更。 -> refactor/constants
     1-3. getメソッドとpostメソッドをrequestメソッドに統合する。 -> refactor/request-methods
-    1-4. サイトにrequestを送信するのに利用するライブラリをrequestsからurllibに変更する。 -> refactor/request-methods
+
+2. Add
+    2-1. ReadmeにSSL認証を無視した通信を行うことに対する注意喚起を追加する。 -> refactor/add-readme-notes
