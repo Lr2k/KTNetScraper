@@ -1,8 +1,4 @@
 # Unreleased
-## [1.0.2]
-### Changed
-- Requests依存からの脱却
-
 ## [1.1.0]
 ### Added
 - 時間割情報の取得機能
