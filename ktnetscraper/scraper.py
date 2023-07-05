@@ -96,63 +96,17 @@ class Scraper(object):
         
         self.connect_timeout = type_checked(connect_timeout, (float, int))
         self.read_timeout = type_checked(read_timeout, (float, int))
-
-    def post(self, encoding: str | None = None, remove_new_line: bool = False,
-             **kwargs) -> str | rq.Response:
-        '''
-        requestsを用いたPostを行う。サイトに最適化したPostを行う。
-        proxyと文字コード等の処理も行う。
-
-        Parameters
-        ----------
-        url : str or bytes
-            urlを指定する。
-        data : dict, opitonal
-            送信データ。requests.post()のdata引数に直接渡される。
-        timeout : tuple or list, optional
-            connect timeoutとread timeoutの時間を指定する。
-        verify : bool. Default is False.
-            Falseの場合、SSL認証を無視する。
-        encoding : str, optional
-            文字コードを指定した場合は、受け取ったResponseオブジェクトをエンコードする。
-            Noneを指定した場合は、Responseオブジェクトを返す。 
-        remove_new_line: bool, default False
-            Trueを指定した場合、改行コードを取り除く。
-
-        Response
-        --------
-        str or requests.Response
-            encodingで文字コードを指定した場合は、エンコードした文字列を返す。
-            encodingでNoneを指定した場合は、Responseオブジェクトを返す。
-        '''
-        encoding = type_checked(encoding, str, allow_none=True)
-        remove_new_line = type_checked(remove_new_line, bool)
-
-        if self.enable_proxy:
-            if "proxies" not in kwargs.keys():
-                kwargs["proxies"] = self.proxies
-        else:
-            kwargs["proxies"] = None
-
-        time.sleep(self.interval)
-        response_data = self.session.post(**kwargs)
-
-        if encoding is not None:
-            response_data.encoding = encoding
-            response_data = response_data.text
-            if remove_new_line:
-                response_data = response_data.replace('\n', '')
-
-        return response_data
-
-    def get(self, encoding: str | None = None,  remove_new_line: bool = False,
-            **kwargs) -> str | rq.Response:
+    
+    def request(self, encoding: str | None = None,  remove_new_line: bool = False,
+                **kwargs) -> str | rq.Response:
         '''
         requestsを用いたgetを行う。
         プロキシ設定の管理も行う。
 
         Parameters
         ----------
+        method : str, default 'GET'
+            リクエストメソッドをGET, OPTIONS, HEAD, POST, PUT, PATCH, DELETEのいずれかで指定する。
         url : str, optional
             urlを指定する。
         data : dict, opitonal
@@ -183,7 +137,7 @@ class Scraper(object):
             kwargs["proxies"] = None
 
         time.sleep(self.interval)
-        response_data = self.session.get(**kwargs)
+        response_data = self.session.request(**kwargs)
 
         if encoding is not None:
             response_data.encoding = encoding
@@ -220,9 +174,9 @@ class Scraper(object):
             'strPassWord': password,
             'strFromAddress': ""
             }
-        response_login = self.post(url=LOGIN_URL, data=login_data, verify=False,
-                                   timeout=(self.connect_timeout, self.read_timeout),
-                                   encoding=PAGE_CHARSET)
+        response_login = self.request(method='POST', url=LOGIN_URL, data=login_data, verify=False,
+                                      timeout=(self.connect_timeout, self.read_timeout),
+                                      encoding=PAGE_CHARSET)
         if "ログインに失敗しました。" in response_login:
             raise WrongIdPasswordException('学籍番号もしくはパスワードが違います。')
         elif "■メニュー" in response_login:
@@ -241,8 +195,9 @@ class Scraper(object):
         bool
             ログイン済みの場合はTrue、未ログインの場合はFalse。
         '''
-        response = self.get(url=MENU_URL, timeout=(self.connect_timeout, self.read_timeout),
-                            verify=False, encoding=PAGE_CHARSET, remove_new_line=True)
+        response = self.request(method='GET', url=MENU_URL,
+                                timeout=(self.connect_timeout, self.read_timeout),
+                                verify=False, encoding=PAGE_CHARSET, remove_new_line=True)
 
         if "■メニュー" in response:
             status = True
@@ -269,7 +224,7 @@ class Scraper(object):
         LoginRequiredException :
             未ログイン状態でサイトにアクセスしている。
         '''
-        timetable_page = self.get(url=TIMETABLE_URL, encoding=PAGE_CHARSET,
+        timetable_page = self.request(method='GET', url=TIMETABLE_URL, encoding=PAGE_CHARSET,
                                   verify=False, remove_new_line=True)
         if '■ログイン' in timetable_page:
             raise LoginRequiredException('ログインしていません。')
@@ -341,8 +296,9 @@ class Scraper(object):
                     'intSelectDay':date.strftime('%d'),
                     'strSelectGakubuNen': f'{faculty},{grade}'}
 
-        timetable_text = self.post(url=TIMETABLE_URL, data=form, verify=False,
-                                   encoding=PAGE_CHARSET, remove_new_line=True)
+        timetable_text = self.request(method='POST', url=TIMETABLE_URL,
+                                      data=form, verify=False,
+                                      encoding=PAGE_CHARSET, remove_new_line=True)
 
         dlpage_urls : tuple
         if "ユニット名" in timetable_text:
@@ -422,8 +378,8 @@ class Scraper(object):
                 info_text = f.read().replace('\n', '')
         else:
             # URLの場合
-            info_text = self.get(url=dlpage_url, verify=False, encoding=PAGE_CHARSET,
-                                 remove_new_line=True)
+            info_text = self.request(method='GET', url=dlpage_url, verify=False,
+                                     encoding=PAGE_CHARSET, remove_new_line=True)
             if "■教材情報" in info_text:
                 pass
             elif "■ログイン" in info_text:
@@ -601,4 +557,4 @@ class Scraper(object):
             教材データか教材データを格納したリストを返す。
         '''
         url = type_checked(url, str)
-        return self.get(url=url, verify=False).content
+        return self.request(method='GET', url=url, verify=False).content
