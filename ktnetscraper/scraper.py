@@ -18,14 +18,6 @@ from .utils import (
     convert_str_to_datetime,
 )
 
-# InsecureRequestWarningを非表示にする。
-# この警告は、requestsのgetの引数にverify=Falseを指定した場合に発生するもの。
-# 携帯ネット.comは金沢医科大学のサイトであり安全であることが確かなため、
-# これらのエラー・警告を無視する。
-import urllib3
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-
-
 # 設定
 #==============================#
 # サイトのエンコードに適用する文字コード
@@ -45,7 +37,6 @@ PROXIES = {
     'https' : 'http://proxy2.kanazawa-med.ac.jp:8080',
 }
 #==============================#
-
  
 class Scraper(object):
     '''
@@ -67,14 +58,17 @@ class Scraper(object):
     read_timeout : float
         接続後、読み込みにかける時間のリミット(秒)
     '''
-    def __init__(self, session: rq.Session | None = None, enable_proxy: bool = False,
-                 proxies: dict | None = None, interval: float | int = 2.0,
-                 connect_timeout: float | int = 5.0, read_timeout: float | int = 5.0):
+    def __init__(self, session: rq.Session | None = None, verify: bool = False, 
+                 enable_proxy: bool = False, proxies: dict | None = None,
+                 interval: float | int = 2.0, connect_timeout: float | int = 5.0,
+                 read_timeout: float | int = 5.0):
         '''
         Parameters
         ----------
         session : requests.Session, optional
             Sessionクラス。
+        verify : bool, default False
+            TLS/SSLを有効化する場合はTrue
         enable_proxy : bool, default False
             プロキシサーバーを経由しアクセスする設定。
         proxies : dict, optional
@@ -88,6 +82,10 @@ class Scraper(object):
             接続後、読み込みにかける時間のリミット(秒)
         '''
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
+
+        self.verify = type_checked(verify, bool)
+        if verify == False:
+            ignore_insecure_warning()
 
         self.enable_proxy = type_checked(enable_proxy, bool)
         self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
@@ -113,8 +111,9 @@ class Scraper(object):
             送信データ。requests.post()のdata引数に直接渡される。
         timeout : tuple or list, optional
             connect timeoutとread timeoutの時間を指定する。
-        verify : bool default False
+        verify : bool
             Falseの場合、SSL認証を無視する。
+            指定がなければ、self.veirfyに準ずる。
         encoding : str, optional
             文字コードを指定した場合は、指定した文字コードでエンコードしたテキストを返す。
             Noneを引数に渡した場合は、Responseオブジェクトを返す。
@@ -129,6 +128,13 @@ class Scraper(object):
         '''
         encoding = type_checked(encoding, str, allow_none=True)
         remove_new_line = type_checked(remove_new_line, bool)
+
+        if 'verify' in kwargs.keys():
+            if kwargs['verify'] == False:
+                if self.verify == True:
+                    ignore_insecure_warning()
+        else:
+            kwargs['verify'] = self.verify
 
         if self.enable_proxy:
             if "proxies" not in kwargs.keys():
@@ -558,3 +564,8 @@ class Scraper(object):
         '''
         url = type_checked(url, str)
         return self.request(method='GET', url=url, verify=False).content
+
+
+def ignore_insecure_warning():
+    import urllib3
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
