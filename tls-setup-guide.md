@@ -13,7 +13,6 @@ certifiはrequestsにルート証明書のリストを提供するライブラ�
 
     scraper = kt.Scraper(verify=True)
 
-もしくは
 
     scraper = kt.Scraper()`
     scraper.request(verify=True)`
