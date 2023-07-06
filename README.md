@@ -10,26 +10,32 @@
 
 ## **Warning**
 初期状態では、requestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないためTLSを用いた暗号通信ができません。
-KTNetScraperはSSL/TLS認証を無視した通信を行うため、中間者攻撃に対して脆弱です。
+SSL/TLS認証を無視した通信を行う場合、中間者攻撃に対し脆弱です。
 SSL/TLS通信を有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
-有効化したい場合は、tls-setup-guide.mdを参考にしてください。
+tls-setup-guide.mdを参考にしてください。
 
 ## Usage
 **0. scraperの初期化**
 
-    import ktnetscraper as kt
+```python
+import ktnetscraper as kt
 
-    scraper = kt.Scraper()
+scraper = kt.Scraper()
+```
 
 **1. ログイン**
 
-    scraper.login(id, password)
+```python
+scraper.login(id, password)
+```
 
 **2. 日付を指定し、教材情報を取得**
 
 `datetime.date` `datetime.datetime` `(YYYY,MM,DD)` `[YYYY,MM,DD]` の内、いずれかの形式で教材情報を参照する日付を指定する。
 
-    infos : tuple[dict] = scraper.fetch_handout_infos(date)
+```python
+infos : tuple[dict] = scraper.fetch_handout_infos(date)
+```
 
 教材情報はdictに格納されており、各項目に対応するkeyとvalueのクラスは以下の通り。
 
@@ -50,8 +56,10 @@ SSL/TLS通信を有効化するには、requestsのcertifiが持つCAバンド�
 
 **3. 教材ファイルをダウンロード**
 
-    url = infos[0]['url']
-    file_data = scraper.download(url)
+```python
+url = infos[0]['url']
+file_data = scraper.download(url)
+```
 
 ## Note
 
