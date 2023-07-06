@@ -95,7 +95,7 @@ class Scraper(object):
         self.connect_timeout = type_checked(connect_timeout, (float, int))
         self.read_timeout = type_checked(read_timeout, (float, int))
     
-    def request(self, method: str = 'GET', encoding: str | None = None,
+    def request(self, encoding: str | None = None, method: str = 'GET',
                 remove_new_line: bool = False, **kwargs) -> str | rq.Response:
         '''
         requestsを用いたgetを行う。
@@ -126,6 +126,8 @@ class Scraper(object):
             encodingで文字コードを指定した場合は、その文字コードでエンコードした文字列を返す。
             encodingでNoneを指定した場合は、Responseオブジェクトを返す。
         '''
+        kwargs['method'] = method
+
         encoding = type_checked(encoding, str, allow_none=True)
         remove_new_line = type_checked(remove_new_line, bool)
 
