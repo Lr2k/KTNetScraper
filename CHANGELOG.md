@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Unreleased
 ## [1.1.0]
 ### Added
@@ -8,6 +9,9 @@
 ### Changed
 - getメソッドとpostメソッドの機能をrequestメソッドに統合。
 - サイトへの接続にSSL/TLSを利用できるようになった。
+=======
+# ChageLog
+>>>>>>> master
 
 ## [1.0.1] - 2023-06-17
 ### Changed
