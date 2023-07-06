@@ -16,6 +16,6 @@ scraper = kt.Scraper(verify=True)
 ```
 
 ```python
-    scraper = kt.Scraper()
-    scraper.request(verify=True)
+scraper = kt.Scraper()
+scraper.request(verify=True)
 ```
