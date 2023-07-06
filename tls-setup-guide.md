@@ -1,4 +1,4 @@
-# SSL/TLSの有効か
+# SSL/TLSの有効化
 
 **1. https://jp.globalsign.com/support/rootcertificates/ssl.html から中間CA証明書をダウンロードする。**
 
