@@ -17,19 +17,25 @@ SSL/TLS通信を有効化するには、requestsのcertifiが持つCAバンド�
 ## Usage
 **0. scraperの初期化**
 
-    import ktnetscraper as kt
+```python
+import ktnetscraper as kt
 
-    scraper = kt.Scraper()
+scraper = kt.Scraper()
+```
 
 **1. ログイン**
 
-    scraper.login(id, password)
+```python
+scraper.login(id, password)
+```
 
 **2. 日付を指定し、教材情報を取得**
 
 `datetime.date` `datetime.datetime` `(YYYY,MM,DD)` `[YYYY,MM,DD]` の内、いずれかの形式で教材情報を参照する日付を指定する。
 
-    infos : tuple[dict] = scraper.fetch_handout_infos(date)
+```python
+infos : tuple[dict] = scraper.fetch_handout_infos(date)
+```
 
 教材情報はdictに格納されており、各項目に対応するkeyとvalueのクラスは以下の通り。
 
@@ -50,8 +56,10 @@ SSL/TLS通信を有効化するには、requestsのcertifiが持つCAバンド�
 
 **3. 教材ファイルをダウンロード**
 
-    url = infos[0]['url']
-    file_data = scraper.download(url)
+```python
+url = infos[0]['url']
+file_data = scraper.download(url)
+```
 
 ## Note
 
