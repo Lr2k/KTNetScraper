@@ -11,9 +11,11 @@ certifiはrequestsにルート証明書のリストを提供するライブラ�
 
 **4. Scraperインスタンス生成時、もしくはrequestメソッド呼び出し時に引数としてverify=Trueを渡す。**
 
-    scraper = kt.Scraper(verify=True)
+```python
+scraper = kt.Scraper(verify=True)
+```
 
-or
-
-    scraper = kt.Scraper()`
-    scraper.request(verify=True)`
+```python
+    scraper = kt.Scraper()
+    scraper.request(verify=True)
+```
