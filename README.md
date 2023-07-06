@@ -9,9 +9,9 @@
 ライブラリ：**requests**, **BeautifulSoup4**
 
 ## **Warning**
-初期状態では、requestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないためTLSを用いた暗号通信ができません。
-SSL/TLS認証を無視した通信を行う場合、中間者攻撃に対し脆弱です。
-SSL/TLS通信を有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
+初期状態ではrequestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないため、TLSを利用した暗号通信ができません。
+SSL/TLSを無視した通信は、中間者攻撃に対し脆弱です。
+SSL/TLSを有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
 tls-setup-guide.mdを参考にしてください。
 
 ## Usage
