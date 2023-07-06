@@ -95,8 +95,8 @@ class Scraper(object):
         self.connect_timeout = type_checked(connect_timeout, (float, int))
         self.read_timeout = type_checked(read_timeout, (float, int))
     
-    def request(self, encoding: str | None = None,  remove_new_line: bool = False,
-                **kwargs) -> str | rq.Response:
+    def request(self, method: str = 'GET', encoding: str | None = None,
+                remove_new_line: bool = False, **kwargs) -> str | rq.Response:
         '''
         requestsを用いたgetを行う。
         プロキシ設定の管理も行う。
