@@ -8,6 +8,12 @@
 
 ライブラリ：**requests**, **BeautifulSoup4**
 
+## **Warning**
+初期状態では、requestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないためTLSを用いた暗号通信ができません。
+KTNetScraperはSSL/TLS認証を無視した通信を行うため、中間者攻撃に対して脆弱です。
+SSL/TLS通信を有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
+有効化したい場合は、tls-setup-guide.mdを参考にしてください。
+
 ## Usage
 **0. scraperの初期化**
 
