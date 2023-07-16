@@ -68,7 +68,7 @@ file_data = scraper.download(url)
 
 ## Version
 
-1.0.1
+1.0.2
 
 ## Author
 
