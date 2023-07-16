@@ -58,7 +58,7 @@ class Scraper(object):
     read_timeout : float
         接続後、読み込みにかける時間のリミット(秒)
     '''
-    def __init__(self, session: rq.Session | None = None, verify: bool = False, 
+    def __init__(self, session: rq.Session | None = None, verify: bool = True, 
                  enable_proxy: bool = False, proxies: dict | None = None,
                  interval: float | int = 2.0, connect_timeout: float | int = 5.0,
                  read_timeout: float | int = 5.0):
@@ -84,7 +84,7 @@ class Scraper(object):
         self.session = rq.Session() if session is None else type_checked(session, rq.Session)
 
         self.verify = type_checked(verify, bool)
-        if verify == False:
+        if self.verify == False:
             ignore_insecure_warning()
 
         self.enable_proxy = type_checked(enable_proxy, bool)
@@ -182,7 +182,7 @@ class Scraper(object):
             'strPassWord': password,
             'strFromAddress': ""
             }
-        response_login = self.request(method='POST', url=LOGIN_URL, data=login_data, verify=False,
+        response_login = self.request(method='POST', url=LOGIN_URL, data=login_data,
                                       timeout=(self.connect_timeout, self.read_timeout),
                                       encoding=PAGE_CHARSET)
         if "ログインに失敗しました。" in response_login:
@@ -205,7 +205,7 @@ class Scraper(object):
         '''
         response = self.request(method='GET', url=MENU_URL,
                                 timeout=(self.connect_timeout, self.read_timeout),
-                                verify=False, encoding=PAGE_CHARSET, remove_new_line=True)
+                                encoding=PAGE_CHARSET, remove_new_line=True)
 
         if "■メニュー" in response:
             status = True
@@ -233,7 +233,7 @@ class Scraper(object):
             未ログイン状態でサイトにアクセスしている。
         '''
         timetable_page = self.request(method='GET', url=TIMETABLE_URL, encoding=PAGE_CHARSET,
-                                  verify=False, remove_new_line=True)
+                                      remove_new_line=True)
         if '■ログイン' in timetable_page:
             raise LoginRequiredException('ログインしていません。')
         elif '■時間割' in timetable_page:
@@ -305,8 +305,8 @@ class Scraper(object):
                     'strSelectGakubuNen': f'{faculty},{grade}'}
 
         timetable_text = self.request(method='POST', url=TIMETABLE_URL,
-                                      data=form, verify=False,
-                                      encoding=PAGE_CHARSET, remove_new_line=True)
+                                      data=form, encoding=PAGE_CHARSET,
+                                      remove_new_line=True)
 
         dlpage_urls : tuple
         if "ユニット名" in timetable_text:
@@ -386,7 +386,7 @@ class Scraper(object):
                 info_text = f.read().replace('\n', '')
         else:
             # URLの場合
-            info_text = self.request(method='GET', url=dlpage_url, verify=False,
+            info_text = self.request(method='GET', url=dlpage_url,
                                      encoding=PAGE_CHARSET, remove_new_line=True)
             if "■教材情報" in info_text:
                 pass
@@ -565,7 +565,7 @@ class Scraper(object):
             教材データか教材データを格納したリストを返す。
         '''
         url = type_checked(url, str)
-        return self.request(method='GET', url=url, verify=False).content
+        return self.request(method='GET', url=url).content
 
 
 def ignore_insecure_warning():
