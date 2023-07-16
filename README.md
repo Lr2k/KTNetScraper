@@ -12,7 +12,7 @@
 初期状態ではrequestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないため、TLSを利用した暗号通信ができません。
 SSL/TLSを無視した通信は、中間者攻撃に対し脆弱です。
 SSL/TLSを有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
-tls-setup-guide.mdを参考にしてください。
+問題が生じてもご自身で対処できる方のみ自己責任で、tls-setup-guide.mdを参考に設定を変更してください。
 
 ## Usage
 **0. scraperの初期化**
