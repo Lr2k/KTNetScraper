@@ -10,12 +10,12 @@ certifiはrequestsにルート証明書のリストを提供するライブラ�
 (例：`C:\Users\<user_name>\AppData\Local\Programs\Python\Python310\Lib\site-packages\certifi\cacert.pem`, `venv\Lib\site-packages\certifi\cacert.pem`)
 
 **4. Scraperインスタンス生成時、もしくはrequestメソッド呼び出し時に引数としてverify=Trueを渡す。**
+※初期化メソッドのverify引数のデフォルトはTrue.
 
 ```python
 scraper = kt.Scraper(verify=True)
 ```
 
 ```python
-scraper = kt.Scraper()
 scraper.request(verify=True)
 ```
