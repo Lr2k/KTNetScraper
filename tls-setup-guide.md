@@ -1,5 +1,7 @@
 # SSL/TLSの有効化
 
+※自己責任でお願いします。
+
 **1. https://jp.globalsign.com/support/rootcertificates/ssl.html から中間CA証明書をダウンロードする。**
 
 **2. ダウンロードした証明書をテキストエディタで開き、ファイルの内容をコピーする。**
