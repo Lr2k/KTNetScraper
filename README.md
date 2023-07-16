@@ -20,8 +20,9 @@ tls-setup-guide.mdを参考にしてください。
 ```python
 import ktnetscraper as kt
 
-scraper = kt.Scraper()
+scraper = kt.Scraper(verify=False)
 ```
+※TLSを利用する設定を行っていない場合は、verifyをFalseに。
 
 **1. ログイン**
 
