@@ -11,7 +11,7 @@ import ktnetscraper as kt
 
 
 def main():
-    scraper = kt.Scraper()
+    scraper = kt.Scraper(verify=False)
 
     # ログイン操作
     id = input('学籍番号：')
@@ -33,7 +33,7 @@ def main():
     date = datetime.date.today()
     handout_infos = scraper.fetch_handout_infos(date=date)
     print(handout_infos)
-    
+
     base_dir_name = f'handouts'
     dir_path = os.path.join(os.path.dirname(__file__), base_dir_name,
                             date.strftime('%Y%m%d'))
