@@ -46,6 +46,8 @@ class Scraper(object):
     ----------
     session : requests.Session
         Sessionクラス。
+    verify : bool
+        TLS/SSLを有効化する場合はTrue。
     enable_proxy : bool
         プロキシサーバーを経由しアクセスする設定。
     proxies : dict
