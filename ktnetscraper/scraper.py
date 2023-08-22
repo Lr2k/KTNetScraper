@@ -110,23 +110,25 @@ class Scraper(object):
         url : str, optional
             urlを指定する。
         data : dict, opitonal
-            送信データ。requests.post()のdata引数に直接渡される。
-        timeout : tuple or list, optional
-            connect timeoutとread timeoutの時間を指定する。
-        verify : bool
-            Falseの場合、SSL認証を無視する。
-            指定がなければ、self.veirfyに準ずる。
+            送信するデータ。requests.post()のdata引数に直接渡される。
         encoding : str, optional
             文字コードを指定した場合は、指定した文字コードでエンコードしたテキストを返す。
             Noneを引数に渡した場合は、Responseオブジェクトを返す。
         remove_new_line : bool, default False
             Trueの場合、改行コードを取り除く。
+        verify : bool, optional
+            Falseの場合、SSL認証を無視する。
+            指定がなければ、インスタンス初期化時の設定が反映される。
         
         Return
         ------
         str or requests.Response
             encodingで文字コードを指定した場合は、その文字コードでエンコードした文字列を返す。
             encodingでNoneを指定した場合は、Responseオブジェクトを返す。
+        
+        Notes
+        -----
+        - Parametersにあげた引数以外にも、Session.requestメソッドと同じ引数が利用可能。
         '''
         kwargs['method'] = method
 
