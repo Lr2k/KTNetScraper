@@ -227,18 +227,20 @@ class Scraper(object):
 
     def get_faculty_and_grade(self) -> tuple[str, str]:
         '''
-        サイトからログインユーザーの学部と学年を取得する。
+        ログインユーザーの学部と学年を取得する。
 
         Return
         ------
         tuple[str, str]
-            (faculty/学部, grade/学部)の形式で返す。
+            ('faculty/学部', 'grade/学年')の形式で返す。
             医学部の場合は'M'、看護学部の場合は'N'を返す。
         
         Raises
         ------
         LoginRequiredException :
             未ログイン状態でサイトにアクセスしている。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         timetable_page = self.request(method='GET', url=TIMETABLE_URL, encoding=PAGE_CHARSET,
                                       remove_new_line=True)
