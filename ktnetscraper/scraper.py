@@ -396,6 +396,13 @@ class Scraper(object):
                 教材の拡張子付きファイル名
             "url" : str
                 教材のダウンロードURL
+
+        Raises
+        ------
+        LoginRequiredException :
+            未ログイン状態でサイトにアクセスした。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         dlpage_url = type_checked(dlpage_url, str)
         date = convert_to_date(date)
