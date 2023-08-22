@@ -274,7 +274,7 @@ class Scraper(object):
     def fetch_dlpage_urls(self, date: datetime.date | list[int | str] | tuple[int | str] | str,
                           faculty: str | None = None, grade: str | None = None) -> tuple[str]:
         '''
-        各教材のダウンロードページへのURLを取得する。
+        教材ダウンロードページへのURLを取得する。
         
         Parameters
         ----------
@@ -293,6 +293,16 @@ class Scraper(object):
         -------
         tuple[str]
             ダウンロードページのURL。
+
+        Raises
+        ------
+        IncompleteArgumentException :
+            必要な引数が提供されていない。
+            faculty引数もしくはgrade引数のみが指定されており、もう一方が不足している。
+        LoginRequiredException :
+            未ログイン状態でサイトにアクセスした。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         date = convert_to_date(date)
 
