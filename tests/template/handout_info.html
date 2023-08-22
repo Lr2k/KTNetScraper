@@ -4,74 +4,74 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html charset=Shift_JIS" />
 <meta http-equiv="Content-Style-Type" content="text/css" />
-<link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/keitai_common.css?20230822225124">
+<link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/keitai_common.css?1987032868000z">
 <link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/fontawesome/css/all.css">
 <script>window.onunload = function(){}; history.forward();</script>
-<title>æ•™ææƒ…å ±æƒ…å ±</title>
+<title>‹³Şî•ñî•ñ</title>
 </head>
 <body>
 <div>
-â—†æºå¸¯ãƒãƒƒãƒˆ.comâ—†<br />
-ç…ç™½ã€€ã€€ã¼ãŸã‚“<br />
-ï¼ˆMX0-0000ï¼‰<br />
+ŸŒg‘Ñƒlƒbƒg.comŸ<br />
+‚”’@@‚Ú‚½‚ñ<br />
+iMX0-0000j<br />
 <hr />
 <script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js'></script>
 <script>
 $(function(){
 	$('.kyozai_link').click(function(){
-		// ãƒ€ã‚¦ãƒ³ãƒ­ãƒ¼ãƒ‰ãƒªãƒ³ã‚¯ã‚¯ãƒªãƒƒã‚¯æ™‚ã«å®Œäº†æ¤œçŸ¥ç”¨ã®cookieã‚’ã‚»ãƒƒãƒˆã™ã‚‹	
+		// ƒ_ƒEƒ“ƒ[ƒhƒŠƒ“ƒNƒNƒŠƒbƒN‚ÉŠ®—¹ŒŸ’m—p‚Ìcookie‚ğƒZƒbƒg‚·‚é	
 		$.cookie('kyozai_download','start', { path: '/' });
 		var kyozai_id = $(this).attr('data-kyozai_id');
 		var elem_ico = $('#ico_downloaded-'+kyozai_id);
-		// ä¸€å®šæ™‚é–“ãŠãã«Cookieã®å†…å®¹ã‚’è§’å°ã™ã‚‹
+		// ˆê’èŠÔ‚¨‚«‚ÉCookie‚Ì“à—e‚ğŠpˆó‚·‚é
 		setInterval(function () {
 			if ($.cookie('kyozai_download') == 'end') {
-				$.removeCookie('kyozai_download', { path: '/' });	//Cookieã®å‰Šé™¤
-				// æœªèª­ã‚¢ã‚¤ã‚³ãƒ³ã®å ´åˆã€æ—¢èª­ã«å¤‰æ›´ã™ã‚‹ã€‚
+				$.removeCookie('kyozai_download', { path: '/' });	//Cookie‚Ìíœ
+				// –¢“ÇƒAƒCƒRƒ“‚Ìê‡AŠù“Ç‚É•ÏX‚·‚éB
 				if(elem_ico.hasClass('ico_downloaded-nodownloaded')){
-					elem_ico.removeClass('ico_downloaded-nodownloaded').addClass('ico_downloaded-downloaded').text('æ—¢èª­');
+					elem_ico.removeClass('ico_downloaded-nodownloaded').addClass('ico_downloaded-downloaded').text('Šù“Ç');
 				}
 			}
 		}, 1000);
 	})
 })
 </script>
-	â– æ•™ææƒ…å ±<br />
+	¡‹³Şî•ñ<br />
 <form action="./List_Timetable.php" name="back_menu1" method="post">
-	<div><input type="submit" value="æˆ»ã‚‹" /></div>
+	<div><input type="submit" value="–ß‚é" /></div>
 </form>
-â—å­¦éƒ¨ãƒ»å­¦å¹´ãƒ»å­¦æœŸ<br />
-ã€€{%faculty%}å­¦éƒ¨ã€€{%grade%}å¹´ã€€{%season%}<br />
-â—ãƒ¦ãƒ‹ãƒƒãƒˆ<br />
-				ã€€{%unit_name%}<br />
-				ã€€ç¬¬{%unit_num%}å›<br />
-ã€€{%date_month%}æœˆ{%date_days%}æ—¥({%days_of_week%})&nbsp;{%period%}é™
+œŠw•”EŠw”NEŠwŠú<br />
+@{%faculty%}Šw•”@{%grade%}”N@{%season%}<br />
+œƒ†ƒjƒbƒg<br />
+				@{%unit_name%}<br />
+				@‘æ{%unit_num%}‰ñ<br />
+@{%date_month%}Œ{%date_days%}“ú({%days_of_week%})&nbsp;{%period%}ŒÀ
 <br />
-â—åŒºåˆ†<br />
-ã€€{%lesson_type%}<br />
-â—è¬›ç¾©ãƒ»å®Ÿç¿’å†…å®¹<br />
-ã€€{%thema%}<br />
-â—ã‚³ã‚¢ã‚«ãƒªé …ç›®<br />
-ã€€{%core_carriculam%}<br />
-â—è¬›åº§<br />
-ã€€{%course%}<br />
-â—æ‹…å½“æ•™å“¡<br />
-ã€€{%teachers%}<br />
-â—å…¬é–‹é–‹å§‹æ—¥<br />
-ã€€{%release_start_at%}<br />
-â—å…¬é–‹çµ‚äº†æ—¥<br />
-ã€€{%release_end_at%}<br />
+œ‹æ•ª<br />
+@{%lesson_type%}<br />
+œu‹`EÀK“à—e<br />
+@{%thema%}<br />
+œƒRƒAƒJƒŠ€–Ú<br />
+@{%core_carriculam%}<br />
+œuÀ<br />
+@{%course%}<br />
+œ’S“–‹³ˆõ<br />
+@{%teachers%}<br />
+œŒöŠJŠJn“ú<br />
+@{%release_start_at%}<br />
+œŒöŠJI—¹“ú<br />
+@{%release_end_at%}<br />
 <br />
-â—æ•™æãƒ»è³‡æ–™å<br />
-ã€€{%name%}<br />
-â—æ•™æãƒ»è³‡æ–™ã®èª¬æ˜<br />
-ã€€{%comments%}<br />
-â—æœ¬æ–‡<p class='block_ico_downloaded'><span id='ico_downloaded-1' class='ico_downloaded ico_downloaded-nodownloaded'>æœªèª­</span></p><a class='kyozai_link' data-kyozai_id='1' href="{%url%}" target="_blank">{%file_name%}</a>
+œ‹³ŞE‘—¿–¼<br />
+@{%name%}<br />
+œ‹³ŞE‘—¿‚Ìà–¾<br />
+@{%comments%}<br />
+œ–{•¶<p class='block_ico_downloaded'><span id='ico_downloaded-1' class='ico_downloaded ico_downloaded-nodownloaded'>–¢“Ç</span></p><a class='kyozai_link' data-kyozai_id='1' href="{%url%}" target="_blank">{%file_name%}</a>
 <br />
 <br />
 <form action="./List_Timetable.php" name="back_menu1" method="post">
-	<div><input type="submit" value="æˆ»ã‚‹" /></div>
+	<div><input type="submit" value="–ß‚é" /></div>
 </form>
 
 </div>
