@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html charset=Shift_JIS" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/keitai_common.css?1987032868000z">
+<link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/fontawesome/css/all.css">
+<script>window.onunload = function(){}; history.forward();</script>
+<title>時間割</title>
+</head>
+<body>
+<div>
+◆携帯ネット.com◆<br />
+獅白　　ぼたん<br />
+（MX0-0000）<br />
+<hr />
+	■時間割<br />
+<form action="../login/Menu.php" name="back_menu1" method="post">
+	<div><input type="submit" value="メニューへ戻る" /></div>
+</form>
+{%faculty%}学部{%grade%}年<br />
+対象日：{%date%} （{%days_of_week%}）<br />
+<hr />
+<table cellpadding="0" cellspacing="0" border="0">
+	<td><div>
+	<form action="#" name="prev1" method="post">
+		<input type="submit" value="←前の日" /><input type="hidden" name="intSelectYear" value="1999" /><input type="hidden" name="intSelectMonth" value="12" /><input type="hidden" name="intSelectDay" value="31" />	</form>
+</div>
+</td>
+	<td><div>
+	<form action="#" name="next1" method="post">
+		<input type="submit" value="次の日→" /><input type="hidden" name="intSelectYear" value="2000" /><input type="hidden" name="intSelectMonth" value="1" /><input type="hidden" name="intSelectDay" value="2" />	</form>
+</div>
+</td>
+</table>
+<form action="./Change_Timetable.php" name="change_menu" method="post">
+	<div><input type="submit" value="日付・学年変更" /></div>
+</form>
+{%class_infos%}
+<table cellpadding="0" cellspacing="0" border="0">
+	<td><div>
+	<form action="#" name="prev1" method="post">
+		<input type="submit" value="←前の日" /><input type="hidden" name="intSelectYear" value="1999" /><input type="hidden" name="intSelectMonth" value="12" /><input type="hidden" name="intSelectDay" value="31" />	</form>
+</div>
+</td>
+	<td><div>
+	<form action="#" name="next1" method="post">
+		<input type="submit" value="次の日→" /><input type="hidden" name="intSelectYear" value="2000" /><input type="hidden" name="intSelectMonth" value="1" /><input type="hidden" name="intSelectDay" value="2" />	</form>
+</div>
+</td>
+</table>
+<form action="../login/Menu.php" name="back_menu2" method="post">
+	<div><input type="submit" value="メニューへ戻る" /></div>
+</form>
+
+</div>
+</body>
+</html>
