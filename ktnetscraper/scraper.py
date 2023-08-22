@@ -199,12 +199,17 @@ class Scraper(object):
 
     def get_login_status(self):
         '''
-        メニューページにアクセスし、ログイン状態を確認する。
+        ログイン状態を確認する。
         
         Return
         ------
         bool
             ログイン済みの場合はTrue、未ログインの場合はFalse。
+        
+        Raises
+        ------
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         response = self.request(method='GET', url=MENU_URL,
                                 timeout=(self.connect_timeout, self.read_timeout),
