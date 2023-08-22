@@ -168,3 +168,30 @@ def test_convert_to_date_0(date):
 def test_convert_to_date_1(date):
     with pytest.raises(TypeError):
         convert_to_date(date)
+
+
+
+# convert_to_datetime()
+
+# 引数
+# date : datetime.date, datetime.datetime, list[int], list[str],
+#        tuple[int], tuple[str], str,
+
+import datetime
+
+from ktnetscraper.utils import convert_str_to_datetime
+
+
+# 正しい入力(2019年4月6日 5時4分)
+@pytest.mark.parametrize(
+    "datetime_str",
+    [
+        ('2019/4/6 5:4'),
+        ('2019/04/06 05:04'),
+    ]
+)
+def test_convert_to_date_0(datetime_str):
+    tz_jst = datetime.timezone(datetime.timedelta(hours=9), 'jst')
+    correct_date = datetime.datetime(2019, 4, 6, 5, 4, tzinfo=tz_jst)
+    
+    assert convert_str_to_datetime(datetime_str) == correct_date
