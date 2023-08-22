@@ -46,6 +46,8 @@ class Scraper(object):
     ----------
     session : requests.Session
         Sessionクラス。
+    verify : bool
+        TLS/SSLを有効化する場合はTrue。
     enable_proxy : bool
         プロキシサーバーを経由しアクセスする設定。
     proxies : dict
@@ -68,7 +70,7 @@ class Scraper(object):
         session : requests.Session, optional
             Sessionクラス。
         verify : bool, default False
-            TLS/SSLを有効化する場合はTrue
+            TLS/SSLを有効化する場合はTrue。
         enable_proxy : bool, default False
             プロキシサーバーを経由しアクセスする設定。
         proxies : dict, optional
@@ -108,23 +110,25 @@ class Scraper(object):
         url : str, optional
             urlを指定する。
         data : dict, opitonal
-            送信データ。requests.post()のdata引数に直接渡される。
-        timeout : tuple or list, optional
-            connect timeoutとread timeoutの時間を指定する。
-        verify : bool
-            Falseの場合、SSL認証を無視する。
-            指定がなければ、self.veirfyに準ずる。
+            送信するデータ。requests.post()のdata引数に直接渡される。
         encoding : str, optional
             文字コードを指定した場合は、指定した文字コードでエンコードしたテキストを返す。
             Noneを引数に渡した場合は、Responseオブジェクトを返す。
         remove_new_line : bool, default False
             Trueの場合、改行コードを取り除く。
+        verify : bool, optional
+            Falseの場合、SSL認証を無視する。
+            指定がなければ、インスタンス初期化時の設定が反映される。
         
         Return
         ------
         str or requests.Response
             encodingで文字コードを指定した場合は、その文字コードでエンコードした文字列を返す。
             encodingでNoneを指定した場合は、Responseオブジェクトを返す。
+        
+        Notes
+        -----
+        - Parametersにあげた引数以外にも、Session.requestメソッドと同じ引数が利用可能。
         '''
         kwargs['method'] = method
 
@@ -158,21 +162,20 @@ class Scraper(object):
     def login(self, id: str, password: str) -> None:
         '''
         ログイン処理を行う。
-        実行後、login_statusメソッドでログインステータスを確認することを推奨。
 
         Parameters
         ----------
-        id : str, optional
+        id : str
             学籍番号。ハイフンを含む。
-            引数に学籍番号を渡すとインスタンス変数idに格納される。
-        password : str, optional
+        password : str
             サイトログイン用のパスワード
-            引数にパスワードを渡すとインスタンス変数passwordに格納される。
         
         Raises
         ------
         WrongIdPasswordError :
             学籍番号やパスワードが誤っているためログインに失敗した。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         id = type_checked(id, str)
         password = type_checked(password, str)
@@ -196,12 +199,17 @@ class Scraper(object):
 
     def get_login_status(self):
         '''
-        メニューページにアクセスし、ログイン状態を確認する。
+        ログイン状態を確認する。
         
         Return
         ------
         bool
             ログイン済みの場合はTrue、未ログインの場合はFalse。
+        
+        Raises
+        ------
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         response = self.request(method='GET', url=MENU_URL,
                                 timeout=(self.connect_timeout, self.read_timeout),
@@ -219,18 +227,20 @@ class Scraper(object):
 
     def get_faculty_and_grade(self) -> tuple[str, str]:
         '''
-        サイトからログインユーザーの学部と学年を取得する。
+        ログインユーザーの学部と学年を取得する。
 
         Return
         ------
         tuple[str, str]
-            (faculty/学部, grade/学部)の形式で返す。
+            ('faculty/学部', 'grade/学年')の形式で返す。
             医学部の場合は'M'、看護学部の場合は'N'を返す。
         
         Raises
         ------
         LoginRequiredException :
             未ログイン状態でサイトにアクセスしている。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         timetable_page = self.request(method='GET', url=TIMETABLE_URL, encoding=PAGE_CHARSET,
                                       remove_new_line=True)
@@ -264,7 +274,7 @@ class Scraper(object):
     def fetch_dlpage_urls(self, date: datetime.date | list[int | str] | tuple[int | str] | str,
                           faculty: str | None = None, grade: str | None = None) -> tuple[str]:
         '''
-        各教材のダウンロードページへのURLを取得する。
+        教材ダウンロードページへのURLを取得する。
         
         Parameters
         ----------
@@ -283,6 +293,16 @@ class Scraper(object):
         -------
         tuple[str]
             ダウンロードページのURL。
+
+        Raises
+        ------
+        IncompleteArgumentException :
+            必要な引数が提供されていない。
+            faculty引数もしくはgrade引数のみが指定されており、もう一方が不足している。
+        LoginRequiredException :
+            未ログイン状態でサイトにアクセスした。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         date = convert_to_date(date)
 
@@ -376,6 +396,13 @@ class Scraper(object):
                 教材の拡張子付きファイル名
             "url" : str
                 教材のダウンロードURL
+
+        Raises
+        ------
+        LoginRequiredException :
+            未ログイン状態でサイトにアクセスした。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         dlpage_url = type_checked(dlpage_url, str)
         date = convert_to_date(date)
@@ -536,6 +563,16 @@ class Scraper(object):
                     教材の拡張子付きファイル名
                 "url" : str
                     教材のダウンロードURL
+
+        Raises
+        ------
+        IncompleteArgumentException :
+            必要な引数が提供されていない。
+            faculty引数もしくはgrade引数のみが指定されており、もう一方が不足している。
+        LoginRequiredException :
+            未ログイン状態でサイトにアクセスした。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         date = convert_to_date(date)
         faculty = type_checked(faculty, str, allow_none=True)
