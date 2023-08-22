@@ -124,4 +124,47 @@ def test_type_checked_7(object, _type, allow_none):
 def test_type_checked_8(object, _type, allow_none):
     assert type_checked(object, _type, allow_none) == None
 
-del type_checked
+
+
+# convert_to_date()
+
+# 引数
+# date : datetime.date, datetime.datetime, list[int], list[str],
+#        tuple[int], tuple[str], str,
+
+import datetime
+
+from ktnetscraper.utils import convert_to_date
+
+
+# 正しい入力(2019年4月6日)
+@pytest.mark.parametrize(
+    "date",
+    [
+        (datetime.datetime(2019, 4, 6)),
+        (datetime.date(2019, 4, 6)),
+        ([2019, 4, 6]),
+        (['2019', '4', '6']),
+        (['2019', '04', '06']),
+        ((2019, 4, 6)),
+        (('2019', '4', '6')),
+        (('2019', '04', '06')),
+        ('2019/4/6'),
+        ('2019/04/06'),
+    ]
+)
+def test_convert_to_date_0(date):
+    correct_date = datetime.date(2019, 4, 6)
+    assert convert_to_date(date) == correct_date
+
+# 誤まった入力(型)
+@pytest.mark.parametrize(
+    "date",
+    [
+        (20190406),
+        (datetime.timedelta(123,23,1))
+    ]
+)
+def test_convert_to_date_1(date):
+    with pytest.raises(TypeError):
+        convert_to_date(date)
