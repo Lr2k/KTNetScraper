@@ -162,21 +162,20 @@ class Scraper(object):
     def login(self, id: str, password: str) -> None:
         '''
         ログイン処理を行う。
-        実行後、login_statusメソッドでログインステータスを確認することを推奨。
 
         Parameters
         ----------
-        id : str, optional
+        id : str
             学籍番号。ハイフンを含む。
-            引数に学籍番号を渡すとインスタンス変数idに格納される。
-        password : str, optional
+        password : str
             サイトログイン用のパスワード
-            引数にパスワードを渡すとインスタンス変数passwordに格納される。
         
         Raises
         ------
         WrongIdPasswordError :
             学籍番号やパスワードが誤っているためログインに失敗した。
+        UnexpextedContentException :
+            想定されていない形式のページを受け取った。
         '''
         id = type_checked(id, str)
         password = type_checked(password, str)
