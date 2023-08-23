@@ -1,6 +1,3 @@
-import re
-
-
 INDEX_PATH = r'page_template\index.html'
 LOGIN_FAILED_PATH = r'page_template\login_failed.html'
 MENU_PATH = r'page_template\menu.html'
@@ -14,6 +11,14 @@ LINK_TEMPLATE_PATH = r'page_template\handout_part_link_template.html'
 HANDOUT_INFO_PATH = r'page_template\handout_info.html'
 
 ENCODING = 'cp932'
+
+
+
+def default(value, default_value=''):
+    '''
+    valueがNoneの場合, デフォルト値(default_value)を返す。
+    '''
+    return default_value if value is None else value
 
 
 def dlpage_url(arg_1=None, arg_2=None, arg_3=None):
@@ -77,13 +82,6 @@ def open_template(path : str, dictionary: dict = None,
         pass
 
     return replace_bracket(text, dictionary)
-
-
-def default(value, default_value=''):
-    '''
-    valueがNoneの場合, デフォルト値(default_value)を返す。
-    '''
-    return default_value if value is None else value
 
 
 def index_template() -> str:
