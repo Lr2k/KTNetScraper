@@ -3,8 +3,7 @@ import re
 
 INDEX_PATH = r'page_template\index.html'
 LOGIN_FAILED_PATH = r'page_template\login_failed.html'
-LOGIN_SUCCED_PATH = r'page_template\login_failed.html'
-
+MENU_PATH = r'page_template\menu.html'
 TIMETABLE_NO_CLASS_PATH = r'page_template\timetable_no_class.html'
 
 TIMETABLE_PATH = r'page_template\timetable_template.html'
@@ -88,8 +87,9 @@ def login_failed_template() -> str:
     return open_template(LOGIN_FAILED_PATH)
 
 
-def login_succed_template() -> str:
-    return open_template(LOGIN_SUCCED_PATH)
+def menu_template() -> str:
+    return open_template(MENU_PATH)
+
 
 
 def handout_template(urls: list[str] | tuple[str] = None,
