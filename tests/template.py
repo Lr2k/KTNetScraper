@@ -16,6 +16,13 @@ HANDOUT_INFO_PATH = r'page_template\handout_info.html'
 ENCODING = 'cp932'
 
 
+def dlpage_url(arg_1=None, arg_2=None, arg_3=None):
+    arg_1 = default(arg_1, '2000M1000000')
+    arg_2 = default(arg_2, '50')
+    arg_3 = default(arg_3, '1')
+    return f'./View_Kyozai.php?kn={arg_1}&kg={arg_2}&kz={arg_3}'
+
+
 # テンプレートの解析
 def find_bracket(string: str) -> tuple[int, int]:
     '''
