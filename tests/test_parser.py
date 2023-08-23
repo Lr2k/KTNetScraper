@@ -1,3 +1,5 @@
+from functools import partial
+
 import pytest
 
 from ktnetscraper import parser, exceptions
@@ -7,6 +9,10 @@ from template import (
     index_template,
     timetable_no_class_template,
     handout_info_template,
+    timetable_template,
+    class_template,
+    handout_template,
+    dlpage_url,
 )
 
 
@@ -139,3 +145,95 @@ def test_get_faculty_and_grade_e1():
 def test_get_faculty_and_grade_e1(page):
     with pytest.raises(exceptions.UnexpextedContentException):
         parser.get_faculty_and_grade(page)
+
+
+# get_dlpage_url
+# 引数
+# text: timetable
+# 返り値
+# URL : (<url>, ...)
+
+#　未入力: class_infos
+m1_timetable_template = partial(timetable_template,
+                                faculty='医', grade='1',
+                                date='2000/01/01', days_of_week='土')
+simple_class = class_template(
+    period='1', unit_name='ユニット', thema='テーマ',
+    room='C11', teachers='教員'
+)
+
+
+# 正常動作
+# 授業の無い日, 教材がない日
+@pytest.mark.parametrize(
+        'page',
+        [
+            (timetable_no_class_template()),
+            (m1_timetable_template(class_infos=simple_class * 6))
+        ]
+)
+def test_get_dlpage_url_0(page):
+    urls = parser.get_dlpage_url(page)
+    assert type(urls) == tuple
+    assert len(urls) == 0
+
+# 世界一最悪なテストを書きました、ごめんなさい
+# 条件１：授業１つ、教材１つ
+# 条件２：授業３つ、　1授業につき教材リンク１つ
+# 条件３：授業３つ、1授業につき教材リンク３つ
+class_num_3 = 3
+handout_per_class_3 = 3
+@pytest.mark.parametrize(
+        'handout_infos_list, class_info_list',
+        [   
+            # 条件１
+            (({'urls':(dlpage_url(arg_2='1')), 'handout_names':('教材1')}),    # handout_info_list
+             ({'period':'1', 'unit_name':'ユニット1', 'thema':'テーマ1', 'room':'C11',
+               'teachers':'教員1'})),                                           # class_info_list
+            # 条件２
+            ([{'urls':(dlpage_url(arg_2=f'{c_i}')), 'handout_names':(f'教材{c_i}')}
+              for c_i in range(class_num_3)],                                   # handout_info_list
+             [{'period':f'{c_i}', 'unit_name':f'ユニット{c_i}', 'thema':f'テーマ{c_i}',
+               'room':f'C1{c_i}', 'teachers':f'教員{c_i}'}
+              for c_i in range(class_num_3)]),                                  # class_info_list
+            # 条件３
+            ([{'urls':[dlpage_url(arg_2=f'{c_i}', arg_3=f'{h_i}') for h_i in range(handout_per_class_3)],
+               'handout_names':[f'教材{c_i*h_i}' for h_i in range(handout_per_class_3)]}
+              for c_i in range(class_num_3)],                                   # handout_info_list 
+             [{'period':f'{c_i}', 'unit_name':f'ユニット{c_i}', 'thema':f'テーマ{c_i}',
+               'room':f'C1{c_i}', 'teachers':f'教員{c_i}'}  
+              for c_i in range(class_num_3)]),                                  # class_info_list
+        ]
+)
+def test_get_dlpage_url_1(handout_infos_list, class_info_list):
+    class_text = ''
+    for c_i, class_info in enumerate(class_info_list):
+        h_infos = handout_infos_list[c_i]
+        class_info['handout'] = handout_template(urls=h_infos['urls'], 
+                                                 handout_names=h_infos['handout_names'])
+        class_text += class_template(**class_info)
+    
+    timetable_page = m1_timetable_template(class_infos=class_text)
+    
+    dlpage_urls = set(parser.get_dlpage_url(timetable_page))
+    correct_dlpage_urls = set(handout_infos_list['urls'])
+    assert dlpage_urls == correct_dlpage_urls
+
+# エラー
+# indexへリダイレクト -> LoginRequiredException
+def test_get_dlpage_url_e0():
+    index_page = index_template()
+    with pytest.raises(exceptions.LoginRequiredException):
+        parser.get_dlpage_url(index_page)
+
+# menu, handout -> UnexpextedContentException
+@pytest.mark.parametrize(
+        'page',
+        [
+            (menu_template()),
+            (handout_info_template())
+        ]
+)
+def test_get_dlpage_url_e1(page):
+    with pytest.raises(exceptions.UnexpextedContentException):
+        parser.get_dlpage_url(page)
