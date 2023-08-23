@@ -10,6 +10,36 @@ from template import (
 )
 
 
+# detect_paeg_type
+# 引数
+# text : login_page, menu_page, timetable_page, handout_page, 不明なページ
+
+# 正常動作
+# 判定可能なページ
+@pytest.mark.parametrize(
+        'page, out',
+        [
+            (index_template(), 'login'),
+            (menu_template(), 'menu'),
+            (timetable_no_class_template(), 'timetable'),
+            (handout_info_template(), 'handout')
+        ]
+)
+def test_detect_page_type_0(page, out):
+    assert parser.detect_page_type(page) == out
+
+# 不明なページ
+@pytest.mark.parametrize(
+        'page, out',
+        [
+            ('', 'unknown'),
+            ('<?xml version="1.0" encoding="Shift_JIS"?>', 'unknown'),
+        ]
+)
+def test_detect_page_type_0(page, out):
+    assert parser.detect_page_type(page) == out
+
+
 # login_status
 # 引数
 # text : login_succes.html, login_failed.html
