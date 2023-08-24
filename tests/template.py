@@ -35,11 +35,13 @@ def find_bracket(string: str) -> tuple[int, int]:
     複数存在する場合は、最も先頭に位置するものについて返す。
     存在しない場合は(None, None)を返す。
     '''
-    open_bracket_position = string.find('{%')
+    open_bracket = '{%'
+    close_bracket = '%}'
+    open_bracket_position = string.find(open_bracket)
     if open_bracket_position == -1:
         return None, None
     else:
-        close_bracket_postition = string.find('%}') + 2
+        close_bracket_postition = string.find(close_bracket) + 2
         return open_bracket_position, close_bracket_postition
 
 
