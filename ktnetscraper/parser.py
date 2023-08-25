@@ -43,3 +43,34 @@ def detect_page_type(text: str) -> Literal['login', 'menu', 'timetable',
             return 'handout'
         case _ :
             return 'unknown'
+
+
+def login_status(text: str) -> bool:
+    '''
+    ログインに成功しているか判定する。
+
+    Parameters
+    ----------
+    text : str
+        メニューページのソース
+    
+    Returns
+    -------
+    bool
+        ログイン済みの場合、Trueを返す。
+    
+    Raises
+    ------
+    UnexpextedContentException :
+        想定されていない形式のページを受け取った。
+    '''
+    page_type = detect_page_type(text)
+    match page_type:
+        case 'menu':
+            return True
+        case 'login':
+            return False
+        case _ :
+            message = f'{page_type}ページを受け取りました。ログイン処理後に取得したページソースを' + \
+                    'text引数に指定してください。'
+            raise exceptions.UnexpextedContentException(message)
