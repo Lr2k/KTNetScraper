@@ -3,8 +3,8 @@ import re
 
 from bs4 import BeautifulSoup
 
-import exceptions
-from utils import type_checked, convert_str_to_datetime
+from . import exceptions
+from .utils import type_checked, convert_str_to_datetime
 
 
 DLPAGE_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
