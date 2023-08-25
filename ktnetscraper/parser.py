@@ -65,6 +65,7 @@ def login_status(text: str) -> bool:
     UnexpextedContentException :
         想定されていない形式のページを受け取った。
     '''
+    text = type_checked(text).replace('\n', '')
     page_type = detect_page_type(text)
     match page_type:
         case 'menu':
