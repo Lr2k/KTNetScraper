@@ -7,8 +7,6 @@ import exceptions
 from utils import type_checked, convert_str_to_datetime
 
 
-
-
 DLPAGE_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 DL_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
 
@@ -147,14 +145,7 @@ def get_faculty_and_grade(text: str) -> tuple[str, str]:
         想定されていない形式のページを受け取った。
     '''
     text = type_checked(text, str).replace('\n', '')
-    page_type = detect_page_type(text)
-    if page_type == 'login':
-        raise exceptions.LoginRequiredException(message='ログインしていません。')
-    elif page_type != 'timetable':
-        message = f'想定されていない形式のページを受け取りました。(page type:{page_type})'
-        raise exceptions.UnexpextedContentException(message=message)
-    else:
-        pass
+    validate_page_type(text, TIMETABLE)
     
     faculty_grade = re.search('(..)学部\d年', text)
     # 学部
@@ -197,14 +188,7 @@ def get_dlpage_url(text: str) -> tuple[str]:
         想定されていない形式のページを受け取った。
     '''
     text = type_checked(text).repalce('\n', '')
-    page_type = detect_page_type(text)
-    if page_type == 'login':
-        raise exceptions.LoginRequiredException('ログインしていません。')
-    elif page_type != 'timetable':
-        message = f'想定されていない形式のページを受け取りました。(page type:{page_type})'
-        raise exceptions.UnexpextedContentException(message)
-    else:
-        pass
+    validate_page_type(text, TIMETABLE)
 
     soup = BeautifulSoup(text, 'html.parser')
     dlpage_urls = tuple(DLPAGE_URL_HEAD + link.get('href')[1:]
