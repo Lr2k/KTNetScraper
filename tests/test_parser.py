@@ -1,4 +1,5 @@
 from functools import partial
+import datetime
 
 import pytest
 
@@ -14,6 +15,9 @@ from template import (
     handout_template,
     dlpage_url,
 )
+
+
+tz_jst = datetime.timezone(datetime.timedelta(hours=9), name='JST')
 
 
 # detect_paeg_type
@@ -237,3 +241,105 @@ def test_get_dlpage_url_e0():
 def test_get_dlpage_url_e1(page):
     with pytest.raises(exceptions.UnexpextedContentException):
         parser.get_dlpage_url(page)
+
+# get_handout_info
+
+# 正常動作
+@pytest.mark.parametrize(
+        'contents, correct_handout',
+        [
+            ({'faculty': '医',
+              'grade': 1,
+              'unit': 'ユニットA',
+              'unit_num': '2',
+              'date_month': '03',
+              'date_days': '04',
+              'days_of_week': '土',
+              'period': '5',
+              'lesson_type': '講義',
+              'thema': 'テーマB',
+              'core_carriculum': 'X-1-1)',
+              'course': 'C学',
+              'teachers': '教員D',
+              'release_start_at': '2000/01/01 03:34',
+              'reelase_end_at': '2001/12/23 19:03',
+              'name': '教材E',
+              'comments': '当日この資料は配付しません。必要であれば印刷・持参して下さい。',
+              'url': './Download.php?year=2000&kn=2000M0000000&kg=50&kz=1',
+              'file_name': 'レジュメ６'},
+             {'unit': 'ユニットA',
+              'unit_num': '2',
+              'period': '5',
+              'lesson_type': '講義',
+              'thema': 'テーマB',
+              'course': 'C学',
+              'teachers': ('教員D'),
+              'release_start_at': datetime.datetime('2000', '1', '1', '3', '34',
+                                                    tzinfo=tz_jst),
+              'release_end_at': datetime.datetime('2001', '12', '23', '19', '3',
+                                                   tzinfo=tz_jst),
+               'name': '教材E',
+               'comments': '当日この資料は配付しません。必要であれば印刷・持参して下さい。',
+               'url': 'https://kt.kanazawa-med.ac.jp/timetable/Download.php?year=2000&kn=2000M0000000&kg=50&kz=1',
+               'file_name': 'レジュメ６.pdf'}),
+               # ハイリスク
+             ({'faculty': '看護',
+              'grade': 6,
+              'unit': 'FORTRAN　（Aクラス Bクラス●1コース）',
+              'unit_num': '12345',
+              'date_month': '05',
+              'date_days': '27',
+              'days_of_week': '月',
+              'period': '99',
+              'lesson_type': '演習',
+              'thema': '　　　　―　確認練習',
+              'core_carriculum': 'X-1-1)',
+              'course': '一般教育機構●量子力学',
+              'teachers': '牧瀬教授,岡部講師, 橋田講師､椎名講師、比屋定助教',
+              'release_start_at': '2010/07/28 12:56',
+              'reelase_end_at': '2010/07/23 12:56',
+              'name': '零化域のミッシングリンク',
+              'comments': 'あ●い・う　え お',
+              'url': './Download.php?year=2000&kn=2000M0000000&kg=50&kz=1',
+              'file_name': 'Absolute Zero.stn'},
+             {'unit': 'FORTRAN　（Aクラス Bクラス●1コース）',
+              'unit_num': '12345',
+              'period': '99',
+              'lesson_type': '演習',
+              'thema': '　　　　―　確認練習',
+              'course': '一般教育機構●量子力学',
+              'teachers': ('牧瀬教授', '岡部講師', '橋田講師', '椎名講師', '比屋定助教'),
+              'release_start_at': datetime.datetime('2010', '7', '28', '12', '56',
+                                                    tzinfo=tz_jst),
+              'release_end_at': datetime.datetime('2010', '7', '23', '12', '56',
+                                                   tzinfo=tz_jst),
+               'name': '零化域のミッシングリンク',
+               'comments': 'あ●い・う　え お',
+               'url': 'https://kt.kanazawa-med.ac.jp/timetable/Download.php?year=2000&kn=2000M0000000&kg=50&kz=1',
+               'file_name': 'Absolute Zero.stn'})
+        ]
+)
+def test_get_handout_info_0(contents, correct_handout):
+    handout_info_page = handout_info_template(**contents)
+    handout = parser.get_handout_info(handout_info_page)
+    assert handout == correct_handout
+
+
+# エラー
+# index -> LoginRequiredException
+def test_get_handout_info_e0():
+    index_page = index_template()
+    with pytest.raises(exceptions.LoginRequiredException):
+        parser.get_handout_info(index_page)
+
+# menu, timetable -> UnexpextedContentException
+@pytest.mark.parametrize(
+        'page',
+        [
+            (menu_template(),
+             timetable_template())
+        ]
+)
+def test_get_handout_info_e1(page):
+    with pytest.raises(exceptions.UnexpextedContentException):
+        parser.get_handout_info(page)
