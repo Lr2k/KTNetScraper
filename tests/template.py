@@ -156,7 +156,7 @@ def timetable_no_class_template(faculty=None, grade=None,
     return open_template(TIMETABLE_NO_CLASS_PATH, contents)
 
 
-def handout_info_template(faculty=None, grade=None, unit_name=None,
+def handout_info_template(faculty=None, grade=None, unit=None,
                           unit_num=None, date_month=None, date_days=None,
                           days_of_week=None, period=None, lesson_type=None,
                           thema=None, core_carriculum=None, course=None,
@@ -166,7 +166,7 @@ def handout_info_template(faculty=None, grade=None, unit_name=None,
     contents = {
         'faculty' : default(faculty),
         'grade' : default(grade),
-        'unit_name' : default(unit_name),
+        'unit' : default(unit),
         'unit_num' : default(unit_num),
         'date_month' : default(date_month),
         'date_days' : default(date_days),
@@ -204,7 +204,7 @@ def _test_handout(num=1):
 def _test_class(class_i=1):
     return class_template(
         period=f'{class_i}',
-        unit_name=f'ユニット{class_i}',
+        unit=f'ユニット{class_i}',
         thema=f'テーマ{class_i}',
         room=f'C3{class_i}',
         teachers=f'教員{class_i}',
