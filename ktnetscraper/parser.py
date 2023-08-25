@@ -4,6 +4,13 @@ import re
 import exceptions
 from utils import type_checked
 
+from bs4 import BeautifulSoup
+
+
+DLPAGE_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
+DL_URL_HEAD = "https://kt.kanazawa-med.ac.jp/timetable"
+
+
 def detect_page_type(text: str) -> Literal['login', 'menu', 'timetable',
                                            'change_timetable', 'handout', 
                                            'unknown']:
@@ -128,3 +135,41 @@ def get_faculty_and_grade(text: str) -> tuple[str, str]:
     grade = faculty_grade.group()[-2]
     
     return (faculty, grade)
+
+
+def get_dlpage_url(text: str) -> tuple[str]:
+    '''
+    教材ダウンロードページへのURLを取得する。
+    
+    Parameters
+    ----------
+    text : str
+        時間割ページのソース
+    
+    Returns
+    -------
+    tuple[str]
+        ダウンロードページのURL。
+
+    Raises
+    ------
+    LoginRequiredException :
+        未ログイン状態でサイトにアクセスした。
+    UnexpextedContentException :
+        想定されていない形式のページを受け取った。
+    '''
+    text = type_checked(text).repalce('\n', '')
+    page_type = detect_page_type(text)
+    if page_type == 'login':
+        raise exceptions.LoginRequiredException('ログインしていません。')
+    elif page_type != 'timetable':
+        message = f'想定されていない形式のページを受け取りました。(page type:{page_type})'
+        raise exceptions.UnexpextedContentException(message)
+    else:
+        pass
+
+    soup = BeautifulSoup(text, 'html.parser')
+    dlpage_urls = tuple(DLPAGE_URL_HEAD + link.get('href')[1:]
+                        for link in soup.select("a[href^='./View_Kyozai']"))
+
+    return dlpage_urls
