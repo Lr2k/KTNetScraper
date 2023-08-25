@@ -24,6 +24,7 @@ def detect_page_type(text: str) -> Literal['login', 'menu', 'timetable',
         教材情報 -> 'handout'
         上記以外 -> 'unknown'
     '''
+    text = type_checked(text, str).replace('\n', '')
     try:
         square_position = text.index('■')
     except ValueError as ve:
@@ -65,7 +66,7 @@ def login_status(text: str) -> bool:
     UnexpextedContentException :
         想定されていない形式のページを受け取った。
     '''
-    text = type_checked(text).replace('\n', '')
+    text = type_checked(text, str).replace('\n', '')
     page_type = detect_page_type(text)
     match page_type:
         case 'menu':
@@ -100,7 +101,7 @@ def get_faculty_and_grade(text: str) -> tuple[str, str]:
     UnexpextedContentException :
         想定されていない形式のページを受け取った。
     '''
-    text = type_checked(text).replace('\n', '')
+    text = type_checked(text, str).replace('\n', '')
     page_type = detect_page_type(text)
     if page_type == 'login':
         raise exceptions.LoginRequiredException(message='ログインしていません。')
