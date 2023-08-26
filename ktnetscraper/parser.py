@@ -296,8 +296,6 @@ def get_handout_info(text: str) -> dict:
             info_dict["unit"] = set[br_position[0]+6:br_position[1]].strip()
             info_dict["unit_num"] = re.sub(r'[第回\s]', '', set[br_position[1]+6:br_position[2]-1])
             info_dict["period"] = set[br_position[3]-2:br_position[3]-1]
-            print(set)
-            print(br_position)
 
         elif "区分" in title:
             # 区分
