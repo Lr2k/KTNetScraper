@@ -1,14 +1,19 @@
-INDEX_PATH = r'page_template\index.html'
-LOGIN_FAILED_PATH = r'page_template\login_failed.html'
-MENU_PATH = r'page_template\menu.html'
-TIMETABLE_NO_CLASS_PATH = r'page_template\timetable_no_class.html'
+from os.path import abspath, dirname, join
+PARDIR = dirname(abspath(__file__))
+def get_template_path(template_name):
+    return join(PARDIR, 'page_template', template_name)
 
-TIMETABLE_PATH = r'page_template\timetable_template.html'
-CLASS_TEMPLATE_PATH = r'page_template\timetable_part_class_template.html'
-HANDOUT_TEMPLATE_PATH = r'page_template\class_part_handout_template.html'
-LINK_TEMPLATE_PATH = r'page_template\handout_part_link_template.html'
+INDEX_PATH = get_template_path('index.html')
+LOGIN_FAILED_PATH = get_template_path('login_failed.html')
+MENU_PATH = get_template_path('menu.html')
+TIMETABLE_NO_CLASS_PATH = get_template_path('timetable_no_class.html')
 
-HANDOUT_INFO_PATH = r'page_template\handout_info.html'
+TIMETABLE_PATH = get_template_path('timetable_template.html')
+CLASS_TEMPLATE_PATH = get_template_path('timetable_part_class_template.html')
+HANDOUT_TEMPLATE_PATH = get_template_path('class_part_handout_template.html')
+LINK_TEMPLATE_PATH = get_template_path('handout_part_link_template.html')
+
+HANDOUT_INFO_PATH = get_template_path('handout_info.html')
 
 ENCODING = 'cp932'
 
