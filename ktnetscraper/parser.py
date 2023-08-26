@@ -42,22 +42,22 @@ def detect_page_type(text: str) -> Literal['login', 'menu', 'timetable',
         square_position = text.index('■')
     except ValueError as ve:
         if f'{ve}' == 'substring not found':
-            return 'unknown'
+            return UNKNOWN
         else:
             raise ve
     
     initial_title = text[square_position + 1]
     match initial_title:
         case 'ロ':
-            return 'login'
+            return LOGIN
         case 'メ':
-            return 'menu'
+            return MENU
         case '時':
-            return 'timetable'
+            return TIMETABLE
         case '教':
-            return 'handout'
+            return HANDOUT
         case _ :
-            return 'unknown'
+            return UNKNOWN
 
 
 def validate_page_type(text: str, correct_page_type: str) -> None:
@@ -78,12 +78,13 @@ def validate_page_type(text: str, correct_page_type: str) -> None:
     UnexpextedContentException :
         想定されていない形式のページ。
     '''
+    text = type_checked(text, str)
     page_type = detect_page_type(text)
     if page_type == LOGIN:
-        raise exceptions.LoginRequiredException(message='ログインしていません。')
+        raise exceptions.LoginRequiredException('ログインしていません。')
     elif page_type != correct_page_type:
         message = f'想定されていない形式のページを受け取りました。(page type:{page_type})'
-        raise exceptions.UnexpextedContentException(message=message)
+        raise exceptions.UnexpextedContentException(message)
     else:
         pass
 
@@ -112,7 +113,7 @@ def login_status(text: str) -> bool:
     text = type_checked(text, str).replace('\n', '')
     page_type = detect_page_type(text)
     match page_type:
-        case 'menu':
+        case 'menu' | 'timetable' | 'handout':
             return True
         case 'login':
             return False
@@ -147,7 +148,7 @@ def get_faculty_and_grade(text: str) -> tuple[str, str]:
     text = type_checked(text, str).replace('\n', '')
     validate_page_type(text, TIMETABLE)
     
-    faculty_grade = re.search('(..)学部\d年', text)
+    faculty_grade = re.search(r'(..)学部\d年', text)
     # 学部
     if faculty_grade.group()[1]=='医':
         faculty = 'M'
@@ -155,7 +156,7 @@ def get_faculty_and_grade(text: str) -> tuple[str, str]:
         faculty ='N'
     else:
         # 学院
-        faculty_grade = re.search('(...)大学院（\d）\d年')
+        faculty_grade = re.search(r'(...)大学院（\d）\d年')
         if faculty_grade.group()[0:3] == '看護学':
             faculty = 'K'
         else:
@@ -187,7 +188,7 @@ def get_dlpage_url(text: str) -> tuple[str]:
     UnexpextedContentException :
         想定されていない形式のページを受け取った。
     '''
-    text = type_checked(text).repalce('\n', '')
+    text = type_checked(text, str).replace('\n', '')
     validate_page_type(text, TIMETABLE)
 
     soup = BeautifulSoup(text, 'html.parser')
@@ -248,7 +249,7 @@ def get_handout_info(text: str) -> dict:
     UnexpextedContentException :
         想定されていない形式のページを受け取った。
     '''
-    text = type_checked(text).repalce('\n', '')
+    text = type_checked(text, str).replace('\n', '')
     validate_page_type(text, HANDOUT)
 
     # '●'を目印に項目名を探す。
@@ -293,8 +294,10 @@ def get_handout_info(text: str) -> dict:
         elif "ユニ" in title:
             # ユニット名、回数、日付、時間を含むものに置き換える
             info_dict["unit"] = set[br_position[0]+6:br_position[1]].strip()
-            info_dict["unit_num"] = set[br_position[1]+6:br_position[2]].strip()[1:3]
+            info_dict["unit_num"] = re.sub(r'[第回\s]', '', set[br_position[1]+6:br_position[2]-1])
             info_dict["period"] = set[br_position[3]-2:br_position[3]-1]
+            print(set)
+            print(br_position)
 
         elif "区分" in title:
             # 区分
@@ -310,9 +313,8 @@ def get_handout_info(text: str) -> dict:
 
         elif "担当" in title:
             # 担当教員
-            teachers = element.split(',')
-            teachers = [teacher.strip() for teacher in teachers]
-            info_dict["teachers"] = tuple(teachers)
+            info_dict["teachers"] = tuple(teacher.strip()
+                                          for teacher in re.split('[,，、､]+', element))
 
         elif "公開開始日" == title:
             # 公開開始日
