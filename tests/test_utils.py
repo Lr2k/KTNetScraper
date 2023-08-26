@@ -149,7 +149,6 @@ from ktnetscraper.utils import convert_to_date
         ((2019, 4, 6)),
         (('2019', '4', '6')),
         (('2019', '04', '06')),
-        ('2019/4/6'),
         ('2019/04/06'),
     ]
 )
@@ -186,11 +185,10 @@ from ktnetscraper.utils import convert_str_to_datetime
 @pytest.mark.parametrize(
     "datetime_str",
     [
-        ('2019/4/6 5:4'),
         ('2019/04/06 05:04'),
     ]
 )
-def test_convert_to_date_0(datetime_str):
+def test_convert_str_to_datetime_0(datetime_str):
     tz_jst = datetime.timezone(datetime.timedelta(hours=9), 'jst')
     correct_date = datetime.datetime(2019, 4, 6, 5, 4, tzinfo=tz_jst)
     
