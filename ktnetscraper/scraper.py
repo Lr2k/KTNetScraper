@@ -245,34 +245,10 @@ class Scraper(object):
         UnexpextedContentException :
             想定されていない形式のページを受け取った。
         '''
-        timetable_page = self.request(method='GET', url=TIMETABLE_URL, encoding=PAGE_CHARSET,
-                                      remove_new_line=True)
-        if '■ログイン' in timetable_page:
-            raise LoginRequiredException('ログインしていません。')
-        elif '■時間割' in timetable_page:
-            # 問題なし
-            pass
-        else:
-            raise UnexpextedContentException('想定されていない形式のページを受け取りました。'\
-                                             f'method:get URL:{TIMETABLE_URL} data:None')
-
-        faculty_grade = re.search('(..)学部\d年', timetable_page)
-        # 学部
-        if faculty_grade.group()[1]=='医':
-            faculty = 'M'
-        elif faculty_grade.group()[0:2]=='看護':
-            faculty ='N'
-        else:
-            # 学院
-            faculty_grade = re.search('(...)大学院（\d）\d年')
-            if faculty_grade.group()[0:3] == '看護学':
-                faculty = 'K'
-            else:
-                faculty = 'D'
-        
-        grade = faculty_grade.group()[-2]
-        
-        return (faculty, grade)
+        response = self.request(method='GET', url=TIMETABLE_URL, encoding=PAGE_CHARSET)
+       
+        return parser.get_faculty_and_grade(response.text)
+    
 
     def fetch_dlpage_urls(self, date: datetime.date | list[int | str] | tuple[int | str] | str,
                           faculty: str | None = None, grade: str | None = None) -> tuple[str]:
