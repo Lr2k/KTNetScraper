@@ -60,7 +60,7 @@ def test_scraper_init_0():
     assert type(scraper.session) == rq.Session
     assert type(scraper.verify) == bool
     assert scraper.verify == True
-    assert type(scraper.enable_proxy) == False
+    assert type(scraper.enable_proxy) == bool
     assert scraper.enable_proxy == False
     assert type(scraper.proxies) == dict
     assert type(scraper.interval) == float
@@ -245,7 +245,11 @@ def test_scraper_request_1(mock_session_request_fixture,
                            proxies_sess_requ_recieve):
     scraper = Scraper(enable_proxy=init_enable_proxy,
                       proxies=PROXIES_TEST, interval=0)
-    response = scraper.request(url='test', proxies=proxies)
+    if proxies is None:
+        response = scraper.request(url='test')
+    else:
+        response = scraper.request(url='test', proxies=proxies)
+
     text = response.text
 
     if 'proxies:None' in text:
@@ -274,7 +278,10 @@ def test_scraper_request_1(mock_session_request_fixture,
 def test_scraper_request_2(mock_session_request_fixture,
                            init_verify, arg_verify, out_verify):
     scraper = Scraper(verify=init_verify, interval=0)
-    response = scraper.request(url='text', verify=arg_verify)
+    if arg_verify is None:
+        response = scraper.request(url='text')
+    else:
+        response = scraper.request(url='text', verify=arg_verify)
     response.encoding = PAGE_ENCODING
     assert f'verify:{out_verify}' in response.text
 
