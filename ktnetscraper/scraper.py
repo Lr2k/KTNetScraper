@@ -69,7 +69,7 @@ class Scraper(object):
         ----------
         session : requests.Session, optional
             Sessionクラス。
-        verify : bool, default False
+        verify : bool, default True
             TLS/SSLを有効化する場合はTrue。
         enable_proxy : bool, default False
             プロキシサーバーを経由しアクセスする設定。
@@ -92,10 +92,10 @@ class Scraper(object):
         self.enable_proxy = type_checked(enable_proxy, bool)
         self.proxies = PROXIES if proxies is None else type_checked(proxies, dict)
 
-        self.interval = type_checked(interval, (float, int))
+        self.interval = float(type_checked(interval, (float, int)))
         
-        self.connect_timeout = type_checked(connect_timeout, (float, int))
-        self.read_timeout = type_checked(read_timeout, (float, int))
+        self.connect_timeout = float(type_checked(connect_timeout, (float, int)))
+        self.read_timeout = float(type_checked(read_timeout, (float, int)))
     
     def request(self, encoding: str | None = None, method: str = 'GET',
                 remove_new_line: bool = False, **kwargs) -> str | rq.Response:
