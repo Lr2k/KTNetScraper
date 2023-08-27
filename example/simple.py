@@ -11,7 +11,8 @@ import ktnetscraper as kt
 
 
 def main():
-    scraper = kt.Scraper(verify=False)
+    # SSL/TLS認証を無視する場合は、verify=Falseを渡す。
+    scraper = kt.Scraper()
 
     # ログイン操作
     id = input('学籍番号：')
@@ -19,7 +20,7 @@ def main():
     scraper.login(id, password)
     
     # ログインステータスを確認
-    logged_in = scraper.get_login_status()
+    logged_in = scraper.login_status()
     print(f'ログイン：{logged_in}')
     if not logged_in:
         print('ログインに失敗しました。')
@@ -29,9 +30,9 @@ def main():
     # ログインユーザーの学部・学年と異なる所属向けの資料を取り扱う場合は、
     # 学部・学年を指定する必要がある。
     # 例 (看護2年の場合): 
-    # scraper.fetch_handout_infos(date=date, faculty='N', grade='2')
+    # scraper.get_handout_infos(date=date, faculty='N', grade='2')
     date = datetime.date.today()
-    handout_infos = scraper.fetch_handout_infos(date=date)
+    handout_infos = scraper.get_handout_infos(date=date)
     print(handout_infos)
 
     base_dir_name = f'handouts'
