@@ -17,6 +17,7 @@ from .utils import (
     convert_to_date,
     convert_str_to_datetime,
 )
+from . import parser
 
 # 設定
 #==============================#
@@ -97,7 +98,7 @@ class Scraper(object):
         self.connect_timeout = float(type_checked(connect_timeout, (float, int)))
         self.read_timeout = float(type_checked(read_timeout, (float, int)))
     
-    def request(self, **kwargs) -> str | rq.Response:
+    def request(self, **kwargs) -> rq.Response:
         '''
         サーバーへのリクエストを行う。
         引数で指定しない限り、プロキシサーバーに関する設定(proxies)とSSL/TLSに関する設定
@@ -111,14 +112,14 @@ class Scraper(object):
             リクエストメソッドをGET, OPTIONS, HEAD, POST, PUT, PATCH, DELETEのいずれかで指定する。
         data : dict, opitonal
             送信するデータ。requests.post()のdata引数に直接渡される。
-        encoding : str, optional
-            文字コードを指定したする。
         verify : bool, optional
             Falseの場合、SSL/TLS認証を無視する。
             指定がなければ、インスタンス初期化時の設定が反映される。
         proxies : dict, optional
             利用するプロキシサーバーのアドレスを指定することで、プロキシサーバーを利用できる。
             指定がなければ、インスタンス初期化時の設定が反映される。
+        encoding : str, optional
+            Responseオブジェクトのencoding属性を指定する。
         
         Return
         ------
@@ -129,6 +130,11 @@ class Scraper(object):
         - Parametersにあげた引数以外にも、requests.Session,request()と同じ引数を利用可能。
         '''
         kwargs_keys = kwargs.keys()
+        
+        encoding = None
+        if 'encoding' in kwargs_keys:
+            encoding = kwargs['encoding']
+            kwargs.pop('encoding')
 
         if 'method' not in kwargs_keys:
             kwargs['method'] = 'GET'
@@ -157,6 +163,8 @@ class Scraper(object):
         time.sleep(self.interval)
         response_data = self.session.request(**kwargs)
 
+        if encoding is not None:
+            response_data.encoding = encoding
         return response_data
 
     def login(self, id: str, password: str) -> None:
@@ -185,17 +193,20 @@ class Scraper(object):
             'strPassWord': password,
             'strFromAddress': ""
             }
-        response_login = self.request(method='POST', url=LOGIN_URL, data=login_data,
-                                      timeout=(self.connect_timeout, self.read_timeout),
-                                      encoding=PAGE_CHARSET)
-        if "ログインに失敗しました。" in response_login:
+        response = self.request(method='POST', url=LOGIN_URL, data=login_data,
+                                encoding=PAGE_CHARSET)
+        try:
+            parser.login_status(response.text)
+            
+        except WrongIdPasswordException:
             raise WrongIdPasswordException('学籍番号もしくはパスワードが違います。')
-        elif "■メニュー" in response_login:
-            # ログインに成功
-            pass
-        else:
-            raise UnexpextedContentException('想定されていない形式のページを受け取りました。'\
-                                             f'method:post URL:{LOGIN_URL} data:{login_data}')
+        
+        except UnexpextedContentException:
+            login_data['strPassWord'] = '*' * len(login_data['strPassWord'])
+            raise UnexpextedContentException('想定されていない形式のページを受け取りました。' +\
+                                             f'method:post URL:{LOGIN_URL}' +\
+                                             f'status_code:{response.status_code} ' +\
+                                             'data:{login_data}')
 
     def get_login_status(self):
         '''
