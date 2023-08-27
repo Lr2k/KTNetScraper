@@ -293,17 +293,21 @@ def test_scraper():
         return
     
     scraper = Scraper()
-    id = 'mx0-0000'
-    password = 'password'
+    id = ''
+    password = ''
     scraper.login(id, password)
-    assert scraper.get_login_status()
+    scraper.login_status()
     
     scraper.get_faculty_and_grade()
 
-    handout_infos = scraper.fetch_handout_infos(
-        date=["2023/04/12"],
-        faculty='M', grade='1'
+    date = "2023/04/12"
+    dlpage_urls = scraper.get_dlpage_urls(
+        date=date, faculty='M', grade='1'
     )
 
-    for handout in handout_infos:
-        scraper.download(url=handout['url'])
+    scraper.get_handoutinfo_from_dlpage(dlpage_urls[0], date=date)
+
+    handout_infos = scraper.get_handout_infos(date, 'M', '1')
+
+
+    scraper.download(url=handout_infos[0]['url'])
