@@ -250,7 +250,7 @@ class Scraper(object):
         return parser.get_faculty_and_grade(response.text)
     
 
-    def fetch_dlpage_urls(self, date: datetime.date | list[int | str] | tuple[int | str] | str,
+    def get_dlpage_urls(self, date: datetime.date | list[int | str] | tuple[int | str] | str,
                           faculty: str | None = None, grade: str | None = None) -> tuple[str]:
         '''
         教材ダウンロードページへのURLを取得する。
@@ -293,6 +293,7 @@ class Scraper(object):
             else:
                 message = '学部を指定した場合は、学年も指定してください。'
             raise IncompleteArgumentException(message)
+        
         elif faculty is None:
             form = {'intSelectYear':date.strftime('%Y'),
                     'intSelectMonth':date.strftime('%m'),
@@ -303,28 +304,11 @@ class Scraper(object):
                     'intSelectDay':date.strftime('%d'),
                     'strSelectGakubuNen': f'{faculty},{grade}'}
 
-        timetable_text = self.request(method='POST', url=TIMETABLE_URL,
-                                      data=form, encoding=PAGE_CHARSET,
-                                      remove_new_line=True)
+        response = self.request(method='POST', url=TIMETABLE_URL,
+                                data=form, encoding=PAGE_CHARSET)
 
-        dlpage_urls : tuple
-        if "ユニット名" in timetable_text:
-            # 授業がある日のページを開いた場合の動作
-            soup = BeautifulSoup(timetable_text, 'html.parser')
-            # ダウンロードページのURLを取得
-            dlpage_urls_list = []
-            for link in soup.select("a[href^='./View_Kyozai']"):
-                dlpage_urls_list.append(DLPAGE_URL_HEAD + link.get('href')[1:])
-            dlpage_urls = tuple(dlpage_urls_list)
-        elif "この日に講義はありません" in timetable_text:
-            dlpage_urls = ()
-        elif "■ログイン" in timetable_text:
-            raise LoginRequiredException('ログインしていません。')
-        else:
-            raise UnexpextedContentException('想定されていない形式のページを受け取りました。'\
-                                             f'method:get URL:{TIMETABLE_URL} data:{form}')
+        return parser.get_dlpage_url(response.text)
 
-        return dlpage_urls
 
     def fetch_handout_from_dlpage(self, dlpage_url: str,
                                   date: datetime.date | list[int | str] | tuple[int | str] | str
