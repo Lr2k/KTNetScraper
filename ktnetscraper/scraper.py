@@ -310,9 +310,9 @@ class Scraper(object):
         return parser.get_dlpage_url(response.text)
 
 
-    def fetch_handout_from_dlpage(self, dlpage_url: str,
-                                  date: datetime.date | list[int | str] | tuple[int | str] | str
-                                  ) -> dict:
+    def get_handoutinfo_from_dlpage(self, dlpage_url: str,
+                                date: datetime.date | list[int | str] | tuple[int | str] | str
+                                ) -> dict:
         '''
         教材のダウンロードページにアクセスし、情報を取得する。
         
@@ -370,106 +370,11 @@ class Scraper(object):
         dlpage_url = type_checked(dlpage_url, str)
         date = convert_to_date(date)
         
-        if os.path.isfile(path=dlpage_url):
-            # ローカルファイルのパスの場合
-            with open(dlpage_url, mode='r') as f:
-                info_text = f.read().replace('\n', '')
-        else:
-            # URLの場合
-            info_text = self.request(method='GET', url=dlpage_url,
-                                     encoding=PAGE_CHARSET, remove_new_line=True)
-            if "■教材情報" in info_text:
-                pass
-            elif "■ログイン" in info_text:
-                raise LoginRequiredException('ログインしていません。')
-            else:
-                raise UnexpextedContentException('想定されていない形式のページを受け取りました。'\
-                                                 f'method:get URL:{dlpage_url} data:')
+        response = self.request(method='GET', url=dlpage_url,
+                                encoding=PAGE_CHARSET)
+        
+        return parser.get_handout_info(response.text)
 
-        # '●'を目印に項目名を探す。
-        points = re.finditer("●", info_text)
-        point_position = [point.start() for point in points]
-
-        info_keys = ("unit", "unit_num", "date", "period", "lesson_type", "thema",
-                     "course", "teachers", "release_start_at", "release_end_at",
-                     "name", "comments", "file_name", "url")
-        info_dict = {key: None for key in info_keys}
-
-        for i in (range(len(point_position))):
-            if len(point_position)-2 <= i:
-                # 一番後ろ、もしくは後ろから二番目の"●"の場合
-                set = info_text[point_position[i]+1:]
-            else:
-                set = info_text[point_position[i]+1:point_position[i+1]]
-
-            br_position = [br.start() for br in re.finditer("<br />", set)]
-
-            # ●教材・資料名<br />　●R４高齢者の内分泌疾患4年<br />●教材・資料の説明
-            # ↑のように要素内に'●'が使用されていると正常に読み込めない
-            # 以下、その対策
-            if len(br_position) in (0, 1):
-                if len(point_position)-1 != i:
-                    set = info_text[point_position[i]+1:point_position[i+2]]
-
-                br_position = [br.start() for br in re.finditer("<br />", set)]
-
-            title = set[:br_position[0]].strip() if len(br_position) > 0 else set
-            element = set[br_position[0]+6:br_position[1]].strip() if len(br_position) > 0 else set
-
-            if "本文" in title:
-                # ダウンロード用のURLが含まれる項目
-                dl_link = BeautifulSoup(title, 'html.parser').select("a[href^='./Download']")[0]
-
-                dl_url_part = dl_link.get('href')
-
-                info_dict["url"] = DL_URL_HEAD + dl_url_part[1:]
-                info_dict["file_name"] = dl_link.getText()
-
-            elif "ユニ" in title:
-                # ユニット名、回数、日付、時間を含むものに置き換える
-                info_dict["unit"] = set[br_position[0]+6:br_position[1]].strip()
-                info_dict["unit_num"] = set[br_position[1]+6:br_position[2]].strip()[1:3]
-                info_dict["date"] = date
-                info_dict["period"] = set[br_position[3]-2:br_position[3]-1]
-
-            elif "区分" in title:
-                # 区分
-                info_dict["lesson_type"] = element
-
-            elif "講義" in title:
-                # 講義・実習内容
-                info_dict["thema"] = element
-
-            elif "講座" in title:
-                # 講座名
-                info_dict["course"] = element
-
-            elif "担当" in title:
-                # 担当教員
-                teachers = element.split(',')
-                teachers = [teacher.strip() for teacher in teachers]
-                info_dict["teachers"] = tuple(teachers)
-
-            elif "公開開始日" == title:
-                # 公開開始日
-                info_dict["release_start_at"] = convert_str_to_datetime(element)
-
-            elif "公開終了日" == title:
-                # 公開終了日
-                info_dict["release_end_at"] = convert_str_to_datetime(element)
-
-            elif "教材・資料名" == title:
-                # 教材・資料名
-                info_dict["name"] = element
-            
-            elif "教材・資料の説明" == title:
-                # 教材・資料の説明
-                info_dict["comments"] = element
-
-            else:
-                pass
-
-        return info_dict
     
     def fetch_handout_infos(self, date: datetime.date | list[int | str] | tuple[int | str],
                             faculty: str | None = None, grade: str | None = None) -> tuple[dict]:
