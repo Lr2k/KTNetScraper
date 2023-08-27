@@ -208,7 +208,8 @@ class Scraper(object):
                                              f'status_code:{response.status_code} ' +\
                                              'data:{login_data}')
 
-    def get_login_status(self):
+
+    def login_status(self):
         '''
         ログイン状態を確認する。
         
@@ -222,19 +223,10 @@ class Scraper(object):
         UnexpextedContentException :
             想定されていない形式のページを受け取った。
         '''
-        response = self.request(method='GET', url=MENU_URL,
-                                timeout=(self.connect_timeout, self.read_timeout),
-                                encoding=PAGE_CHARSET, remove_new_line=True)
+        response = self.request(method='GET', url=MENU_URL, encoding=PAGE_CHARSET)
 
-        if "■メニュー" in response:
-            status = True
-        elif "■ログイン":
-            status = False
-        else:
-            raise UnexpextedContentException('想定されていない形式のページを受け取りました。'\
-                                             f'method:get URL:{MENU_URL} data:')
+        return parser.login_status(response.text)
 
-        return status
 
     def get_faculty_and_grade(self) -> tuple[str, str]:
         '''
