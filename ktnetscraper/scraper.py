@@ -97,65 +97,65 @@ class Scraper(object):
         self.connect_timeout = float(type_checked(connect_timeout, (float, int)))
         self.read_timeout = float(type_checked(read_timeout, (float, int)))
     
-    def request(self, encoding: str | None = None, method: str = 'GET',
-                remove_new_line: bool = False, **kwargs) -> str | rq.Response:
+    def request(self, **kwargs) -> str | rq.Response:
         '''
-        requestsを用いたgetを行う。
-        プロキシ設定の管理も行う。
+        サーバーへのリクエストを行う。
+        引数で指定しない限り、プロキシサーバーに関する設定(proxies)とSSL/TLSに関する設定
+        (verify)はインスタンス初期化時の設定に従う。
 
         Parameters
         ----------
-        method : str, default 'GET'
-            リクエストメソッドをGET, OPTIONS, HEAD, POST, PUT, PATCH, DELETEのいずれかで指定する。
         url : str, optional
             urlを指定する。
+        method : str, default 'GET'
+            リクエストメソッドをGET, OPTIONS, HEAD, POST, PUT, PATCH, DELETEのいずれかで指定する。
         data : dict, opitonal
             送信するデータ。requests.post()のdata引数に直接渡される。
         encoding : str, optional
-            文字コードを指定した場合は、指定した文字コードでエンコードしたテキストを返す。
-            Noneを引数に渡した場合は、Responseオブジェクトを返す。
-        remove_new_line : bool, default False
-            Trueの場合、改行コードを取り除く。
+            文字コードを指定したする。
         verify : bool, optional
-            Falseの場合、SSL認証を無視する。
+            Falseの場合、SSL/TLS認証を無視する。
+            指定がなければ、インスタンス初期化時の設定が反映される。
+        proxies : dict, optional
+            利用するプロキシサーバーのアドレスを指定することで、プロキシサーバーを利用できる。
             指定がなければ、インスタンス初期化時の設定が反映される。
         
         Return
         ------
-        str or requests.Response
-            encodingで文字コードを指定した場合は、その文字コードでエンコードした文字列を返す。
-            encodingでNoneを指定した場合は、Responseオブジェクトを返す。
+        requests.Response
         
         Notes
         -----
-        - Parametersにあげた引数以外にも、Session.requestメソッドと同じ引数が利用可能。
+        - Parametersにあげた引数以外にも、requests.Session,request()と同じ引数を利用可能。
         '''
-        kwargs['method'] = method
+        kwargs_keys = kwargs.keys()
 
-        encoding = type_checked(encoding, str, allow_none=True)
-        remove_new_line = type_checked(remove_new_line, bool)
-
-        if 'verify' in kwargs.keys():
+        if 'method' not in kwargs_keys:
+            kwargs['method'] = 'GET'
+        else:
+            pass
+        
+        # 引数の設定を優先
+        if 'verify' in kwargs_keys:
             if kwargs['verify'] == False:
                 if self.verify == True:
+                    # 初期化時に警告を無視する操作を行っていないため
                     ignore_insecure_warning()
+            else:
+                pass
         else:
             kwargs['verify'] = self.verify
 
-        if self.enable_proxy:
-            if "proxies" not in kwargs.keys():
-                kwargs["proxies"] = self.proxies
+        # 引数の設定を優先
+        if 'proxies' in kwargs_keys:
+            pass
+        elif self.enable_proxy:
+            kwargs['proxies'] = self.proxies
         else:
-            kwargs["proxies"] = None
+            pass
 
         time.sleep(self.interval)
         response_data = self.session.request(**kwargs)
-
-        if encoding is not None:
-            response_data.encoding = encoding
-            response_data = response_data.text
-            if remove_new_line:
-                response_data = response_data.replace('\n', '')
 
         return response_data
 
