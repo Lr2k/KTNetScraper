@@ -90,7 +90,7 @@ def login_status_speed(num_runs=40, scale=1):
     return total_time / total_runs
 
 
-def single_handout_class_infos(i: int = 6):
+def single_handout_class_infos(i: int = 1):
     handout_url_part = r'./View_Kyozai.php?kn=2023M5200780&kg=49&kz='
     return template.class_template(
         f'{i}', f'ユニット{i}', f'テーマ{i}',f'C1{i}', '教員{i}',
@@ -126,14 +126,15 @@ def get_faculty_and_grade_speed(num_runs: int = 17, scale: int = 1):
 def get_dlpage_url_speed(num_runs: int = 200, scale: int = 1):
     num_runs *= scale
     total_time = 0.0
+    class_infos = ''.join([single_handout_class_infos(i) for i in range(6)])
     page = template.timetable_template(
         date='2000/01/01', days_of_week='土',
         faculty='医', grade='1',
-        class_infos=single_handout_class_infos(6)
+        class_infos=class_infos
     )
     
     for _ in range(num_runs):
-        total_time += parser_speed(parser.get_faculty_and_grade, page)
+        total_time += parser_speed(parser.get_dlpage_url, page)
     
     return total_time / num_runs
 
@@ -182,18 +183,19 @@ def main():
 if __name__=='__main__':
     main()
 
-    # 2023/8/26
-    # scale:200
-    # detect_page_type     :  2.7700448036193875e-06
-    # login_status         :  3.315200805664079e-06
-    # get_faculty_and_grade:  2.1343033687740682e-05
-    # get_dlpage_url       :  1.9057143926620067e-05
-    # get_hadout_info      :  0.00032488254427909637
+
+    # 2023/08/28
+    # scale:2
+    # detect_page_type     :  3.008425235748291e-06
+    # login_status         :  5.008399486541748e-06
+    # get_faculty_and_grade:  2.255030706817029e-05
+    # get_dlpage_url       :  0.004830000281333926
+    # get_hadout_info      :  6.843656301498411e-05
 
     # 2023/08/28
     # scale:200
-    # detect_page_type     :  2.815364599227911e-06
-    # login_status         :  3.345133066177376e-06
-    # get_faculty_and_grade:  2.1242862822962225e-05
-    # get_dlpage_url       :  1.8934725522994607e-05
-    # get_hadout_info      :  5.950631558895394e-05
+    # detect_page_type     :  2.8680944442749074e-06
+    # login_status         :  3.5449016094207814e-06
+    # get_faculty_and_grade:  2.249866490270539e-05
+    # get_dlpage_url       :  1.7417964339255963e-05
+    # get_hadout_info      :  6.075025677681106e-05
