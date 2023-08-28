@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="Shift_JIS"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html charset=Shift_JIS" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/keitai_common.css?19870328x68000">
+<link rel="stylesheet" href="https://kt.kanazawa-med.ac.jp/common/fontawesome/css/all.css">
+<script>window.onunload = function(){}; history.forward();</script>
+<title>教材情報情報</title>
+</head>
+<body>
+<div>
+◆携帯ネット.com◆<br />
+獅白　　ぼたん<br />
+（MX0-0000）<br />
+<hr />
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js'></script>
+<script>
+$(function(){
+	$('.kyozai_link').click(function(){
+		// ダウンロードリンククリック時に完了検知用のcookieをセットする	
+		$.cookie('kyozai_download','start', { path: '/' });
+		var kyozai_id = $(this).attr('data-kyozai_id');
+		var elem_ico = $('#ico_downloaded-'+kyozai_id);
+		// 一定時間おきにCookieの内容を角印する
+		setInterval(function () {
+			if ($.cookie('kyozai_download') == 'end') {
+				$.removeCookie('kyozai_download', { path: '/' });	//Cookieの削除
+				// 未読アイコンの場合、既読に変更する。
+				if(elem_ico.hasClass('ico_downloaded-nodownloaded')){
+					elem_ico.removeClass('ico_downloaded-nodownloaded').addClass('ico_downloaded-downloaded').text('既読');
+				}
+			}
+		}, 1000);
+	})
+})
+</script>
+	■教材情報<br />
+<form action="./List_Timetable.php" name="back_menu1" method="post">
+	<div><input type="submit" value="戻る" /></div>
+</form>
+●学部・学年・学期<br />
+　{%faculty%}学部　{%grade%}年　前期<br />
+●ユニット<br />
+				　{%unit%}<br />
+				　第{%unit_num%}回<br />
+　{%date_month%}月{%date_days%}日({%days_of_week%})&nbsp;{%period%}限
+<br />
+●区分<br />
+　{%lesson_type%}<br />
+●講義・実習内容<br />
+　{%thema%}<br />
+●コアカリ項目<br />
+　{%core_carriculum%}<br />
+●講座<br />
+　{%course%}<br />
+●担当教員<br />
+　{%teachers%}<br />
+●公開開始日<br />
+　{%release_start_at%}<br />
+●公開終了日<br />
+　{%release_end_at%}<br />
+<br />
+●教材・資料名<br />
+　{%name%}<br />
+●教材・資料の説明<br />
+　{%comments%}<br />
+●本文<p class='block_ico_downloaded'><span id='ico_downloaded-1' class='ico_downloaded ico_downloaded-nodownloaded'>未読</span></p><a class='kyozai_link' data-kyozai_id='1' href="{%url%}" target="_blank">{%file_name%}</a>
+<br />
+<br />
+<form action="./List_Timetable.php" name="back_menu1" method="post">
+	<div><input type="submit" value="戻る" /></div>
+</form>
+
+</div>
+</body>
+</html>

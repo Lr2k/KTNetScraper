@@ -1,9 +1,12 @@
-# Unreleased
-## [1.1.0]
-### Added
-- 時間割情報の取得機能を追加。
-
 # ChageLog
+## [1.1.0] - 2023-08-28
+### Changed
+- requestメソッドの仕様を変更。
+- 軽微な調整。
+
+### Added
+- parserモジュールを追加。
+
 ## [1.0.2] - 2023-07-06
 ### Changed
 - getメソッドとpostメソッドの機能をrequestメソッドに統合。
