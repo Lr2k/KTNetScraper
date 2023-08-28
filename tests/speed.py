@@ -189,3 +189,11 @@ if __name__=='__main__':
     # get_faculty_and_grade:  2.1343033687740682e-05
     # get_dlpage_url       :  1.9057143926620067e-05
     # get_hadout_info      :  0.00032488254427909637
+
+    # 2023/08/28
+    # scale:200
+    # detect_page_type     :  2.815364599227911e-06
+    # login_status         :  3.345133066177376e-06
+    # get_faculty_and_grade:  2.1242862822962225e-05
+    # get_dlpage_url       :  1.8934725522994607e-05
+    # get_hadout_info      :  5.950631558895394e-05
