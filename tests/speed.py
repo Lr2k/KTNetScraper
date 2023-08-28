@@ -2,7 +2,6 @@ import string
 import os, sys
 import random
 import time
-import datetime
 from functools import partial
 
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
