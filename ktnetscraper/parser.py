@@ -16,6 +16,7 @@ HANDOUT = 'handout'
 UNKNOWN = 'unknown'
 
 
+
 def detect_page_type(text: str) -> Literal['login', 'menu', 'timetable',
                                            'handout', 'unknown']:
     '''
@@ -300,13 +301,14 @@ def get_handout_info(text: str) -> dict:
         elif "本文" in title:
             # ダウンロード用のURLが含まれる項目
             # hrefが見つからない場合、href_pos -> -1
-            href_pos = title.find('href')
-            if href_pos != -1:
-                dl_link_part = title[href_pos+7:title.rfind('</a')]
-                url_end = dl_link_part[:dl_link_part.find('"')]
-                file_name = dl_link_part[dl_link_part.find('>')+1:]
+            url_start = title.find('/Download')
+            if url_start != -1:
+                url_end = title.find('"', url_start)
+                
+                url = title[url_start:url_end]
+                file_name = title[title.find('>', url_end)+1:title.rfind('</a')]
 
-                info_dict["url"] = DL_URL_HEAD + url_end
+                info_dict["url"] = DL_URL_HEAD + url
                 info_dict["file_name"] = file_name
             else:
                 pass
@@ -334,6 +336,5 @@ def get_handout_info(text: str) -> dict:
 
         else:
             pass
-
 
     return info_dict
