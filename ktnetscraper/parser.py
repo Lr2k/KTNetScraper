@@ -1,8 +1,6 @@
 from typing import Literal
 import re
 
-from bs4 import BeautifulSoup
-
 from . import exceptions
 from .utils import type_checked, convert_str_to_datetime
 
@@ -191,11 +189,10 @@ def get_dlpage_url(text: str) -> tuple[str]:
     text = type_checked(text, str).replace('\n', '')
     validate_page_type(text, TIMETABLE)
 
-    soup = BeautifulSoup(text, 'html.parser')
-    dlpage_urls = tuple(DLPAGE_URL_HEAD + link.get('href')[1:]
-                        for link in soup.select("a[href^='./View_Kyozai']"))
-
-    return dlpage_urls
+    # <a href=".|ココから→|/View_Kyozai.php?
+    # kn=2023M5200780&kg=49&kz=5|←ここまで|">
+    url_pattern = re.compile('<a href=".(/View_Kyozai.*?)">')
+    return tuple(DLPAGE_URL_HEAD + url for url in re.findall(url_pattern, text))
 
 
 def get_handout_info(text: str) -> dict:
