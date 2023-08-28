@@ -257,9 +257,18 @@ def get_handout_info(text: str) -> dict:
     point_position = [point.start() for point in points]
 
     info_keys = ("unit", "unit_num", "period", "lesson_type", "thema",
-                    "course", "teachers", "release_start_at", "release_end_at",
-                    "name", "comments", "file_name", "url")
+                 "course", "teachers", "release_start_at", "release_end_at",
+                 "name", "comments", "file_name", "url")
     info_dict = {key: None for key in info_keys}
+    simple_contents_keys = {
+        "区分": "lesson_type",
+        "講義・実習内容": "thema",
+        "講座": "course",
+        "教材・資料名": "name",
+        "教材・資料の説明": "comments",
+    }
+    simple_contents_titles = ("区分", "講座", "講義・実習内容",
+                              "教材・資料名", "教材・資料の説明")
 
     for i in (range(len(point_position))):
         if len(point_position)-2 <= i:
@@ -273,46 +282,50 @@ def get_handout_info(text: str) -> dict:
         # ●教材・資料名<br />　●R４高齢者の内分泌疾患4年<br />●教材・資料の説明
         # ↑のように要素内に'●'が使用されていると正常に読み込めない
         # 以下、その対策
-        if len(br_position) in (0, 1):
+        len_br_pos = len(br_position)
+        if len_br_pos in (0, 1):
             if len(point_position)-1 != i:
                 set = text[point_position[i]+1:point_position[i+2]]
 
             br_position = [br.start() for br in re.finditer("<br />", set)]
 
-        title = set[:br_position[0]].strip() if len(br_position) > 0 else set
-        element = set[br_position[0]+6:br_position[1]].strip() if len(br_position) > 0 else set
+        br_larger_0 = len_br_pos > 0
+        title = set[:br_position[0]].strip() if br_larger_0 else set
+        element = set[br_position[0]+6:br_position[1]].strip() if br_larger_0 else set
 
-        if "本文" in title:
+
+        # 要素に対し、特別な処理が必要ないもの
+        if title in simple_contents_titles:
+            info_dict[simple_contents_keys[title]] = element
+        
+        # "本文"はtitleにファイル名も含まれているため、本文を条件分岐の後半に設置すると、
+        # ファイル名に"ユニ"などの文字列が含まれる場合に問題が生じる。
+        elif "本文" in title:
             # ダウンロード用のURLが含まれる項目
-            dl_link = BeautifulSoup(title, 'html.parser').select("a[href^='./Download']")[0]
+            # hrefが見つからない場合、href_pos -> -1
+            href_pos = title.find('href')
+            if href_pos != -1:
+                dl_link_part = title[href_pos+7:title.rfind('</a')]
+                url_end = dl_link_part[:dl_link_part.find('"')]
+                file_name = dl_link_part[dl_link_part.find('>')+1:]
 
-            dl_url_part = dl_link.get('href')
-
-            info_dict["url"] = DL_URL_HEAD + dl_url_part[1:]
-            info_dict["file_name"] = dl_link.getText()
-
+                info_dict["url"] = DL_URL_HEAD + url_end
+                info_dict["file_name"] = file_name
+            else:
+                pass
+        
         elif "ユニ" in title:
             # ユニット名、回数、日付、時間を含むものに置き換える
             info_dict["unit"] = set[br_position[0]+6:br_position[1]].strip()
-            info_dict["unit_num"] = re.sub(r'[第回\s]', '', set[br_position[1]+6:br_position[2]-1])
+            info_dict["unit_num"] = re.sub(r'[第回\s]', '', set[br_position[1]+6:br_position[2]])
             info_dict["period"] = set[br_position[3]-2:br_position[3]-1]
-
-        elif "区分" in title:
-            # 区分
-            info_dict["lesson_type"] = element
-
-        elif "講義" in title:
-            # 講義・実習内容
-            info_dict["thema"] = element
-
-        elif "講座" in title:
-            # 講座名
-            info_dict["course"] = element
 
         elif "担当" in title:
             # 担当教員
-            info_dict["teachers"] = tuple(teacher.strip()
-                                          for teacher in re.split('[,，、､]+', element))
+            info_dict["teachers"] = tuple(
+                teacher.strip()
+                for teacher in re.split('[,，、､]+', element)
+            )
 
         elif "公開開始日" == title:
             # 公開開始日
@@ -322,15 +335,8 @@ def get_handout_info(text: str) -> dict:
             # 公開終了日
             info_dict["release_end_at"] = convert_str_to_datetime(element)
 
-        elif "教材・資料名" == title:
-            # 教材・資料名
-            info_dict["name"] = element
-        
-        elif "教材・資料の説明" == title:
-            # 教材・資料の説明
-            info_dict["comments"] = element
-
         else:
             pass
+
 
     return info_dict
