@@ -1,21 +1,16 @@
-import re
-import os
 import datetime
 import time
 
 import requests as rq
-from bs4 import BeautifulSoup
 
 from .exceptions import (
     WrongIdPasswordException,
-    LoginRequiredException,
     UnexpextedContentException,
     IncompleteArgumentException,
 )
 from .utils import (
     type_checked,
     convert_to_date,
-    convert_str_to_datetime,
 )
 from . import parser
 

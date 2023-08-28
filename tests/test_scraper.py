@@ -1,13 +1,7 @@
 import requests as rq
-from requests import structures
-from unittest.mock import patch
-
 import pytest
 
 from ktnetscraper import Scraper
-from ktnetscraper.exceptions import (
-    WrongIdPasswordException,
-)
 import template
 
 
