@@ -6,13 +6,13 @@
 
 **python3.10** (他のバージョンでは検証していません。)
 
-ライブラリ：**requests**, **BeautifulSoup4**
+ライブラリ：**requests**
 
 ## **Warning**
-初期状態ではrequestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないため、TLSを利用した暗号通信ができません。
+初期状態ではrequestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないため、SSL/TLSを利用できません。
 SSL/TLSを無視した通信は、中間者攻撃に対し脆弱です。
 SSL/TLSを有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
-問題が生じてもご自身で対処できる方のみ自己責任で、tls-setup-guide.mdを参考に設定を変更してください。
+問題が生じてもご自身で対処できる方のみ、tls-setup-guide.mdを参考に自己責任で設定を変更してください。
 
 ## Usage
 **0. scraperの初期化**
@@ -22,7 +22,7 @@ import ktnetscraper as kt
 
 scraper = kt.Scraper(verify=False)
 ```
-※TLSを利用する設定を行っていない場合は、verifyをFalseに。
+※TLSを利用しない場合は、verifyをFalseに。
 
 **1. ログイン**
 
@@ -68,7 +68,7 @@ file_data = scraper.download(url)
 
 ## Version
 
-1.0.2
+1.1.0
 
 ## Author
 
