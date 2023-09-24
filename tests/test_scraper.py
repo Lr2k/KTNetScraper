@@ -299,7 +299,7 @@ def test_scraper():
         date=date, faculty='M', grade='1'
     )
 
-    scraper.get_handoutinfo_from_dlpage(dlpage_urls[0], date=date)
+    scraper.get_handoutinfo_from_dlpage(dlpage_urls[0])
 
     handout_infos = scraper.get_handout_infos(date, 'M', '1')
 

@@ -289,15 +289,13 @@ class Scraper(object):
                 message = '学部を指定した場合は、学年も指定してください。'
             raise IncompleteArgumentException(message)
         
-        elif faculty is None:
-            form = {'intSelectYear':date.strftime('%Y'),
-                    'intSelectMonth':date.strftime('%m'),
-                    'intSelectDay':date.strftime('%d'),}
-        else:    
-            form = {'intSelectYear':date.strftime('%Y'),
-                    'intSelectMonth':date.strftime('%m'),
-                    'intSelectDay':date.strftime('%d'),
-                    'strSelectGakubuNen': f'{faculty},{grade}'}
+        form = {
+            'intSelectYear':date.strftime('%Y'),
+            'intSelectMonth':date.strftime('%m'),
+            'intSelectDay':date.strftime('%d'),
+        }
+        if faculty is not None:
+            form['strSelectGakubuNen'] = f'{faculty},{grade}'
 
         response = self.request(method='POST', url=TIMETABLE_URL,
                                 data=form, encoding=PAGE_CHARSET)
@@ -305,9 +303,7 @@ class Scraper(object):
         return parser.get_dlpage_url(response.text)
 
 
-    def get_handoutinfo_from_dlpage(self, dlpage_url: str,
-                                date: datetime.date | list[int | str] | tuple[int | str] | str
-                                ) -> dict:
+    def get_handoutinfo_from_dlpage(self, dlpage_url: str) -> dict:
         '''
         教材のダウンロードページにアクセスし、情報を取得する。
         
@@ -315,10 +311,6 @@ class Scraper(object):
         ----------
         dlpage_url : str
             教材ダウンロードページのURL
-        date : datetime.datetime, datetime.date, list[int|str] or tuple[int|str], str
-            URLを取得する時間割ページの日付を指定する。
-            listやtupleで指定する場合は(年, 月, 日)の順で指定する。
-            strで指定する場合は、年・月・日を'/'で区切る。(例:'1998/5/27', '1998/05/27')
 
         Returns
         -------
@@ -363,7 +355,6 @@ class Scraper(object):
             想定されていない形式のページを受け取った。
         '''
         dlpage_url = type_checked(dlpage_url, str)
-        date = convert_to_date(date)
         
         response = self.request(method='GET', url=dlpage_url,
                                 encoding=PAGE_CHARSET)
@@ -372,8 +363,8 @@ class Scraper(object):
 
     
     def get_handout_infos(self, date: datetime.date | list[int | str] | tuple[int | str],
-                          faculty: str | None = None,
-                          grade: str | None = None) -> tuple[dict]:
+                          faculty: str | None = None, grade: str | None = None
+                          ) -> tuple[dict]:
         '''
         指定した日付に紐づけられている教材の情報を取得する。
 
@@ -445,9 +436,7 @@ class Scraper(object):
         dlpage_urls = self.get_dlpage_urls(date=date, faculty=faculty, grade=grade)
 
         return tuple(
-            self.get_handoutinfo_from_dlpage(
-                dlpage_url=dlpage_url, date=date
-            )
+            self.get_handoutinfo_from_dlpage(dlpage_url=dlpage_url)
             for dlpage_url in dlpage_urls
         )
 
