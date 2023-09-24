@@ -365,8 +365,8 @@ class Scraper(object):
 
     
     def get_handout_infos(self, date: datetime.date | list[int | str] | tuple[int | str],
-                          faculty: str | None = None,
-                          grade: str | None = None) -> tuple[dict]:
+                          faculty: str | None = None, grade: str | None = None
+                          ) -> tuple[dict]:
         '''
         指定した日付に紐づけられている教材の情報を取得する。
 
@@ -438,9 +438,7 @@ class Scraper(object):
         dlpage_urls = self.get_dlpage_urls(date=date, faculty=faculty, grade=grade)
 
         return tuple(
-            self.get_handoutinfo_from_dlpage(
-                dlpage_url=dlpage_url, date=date
-            )
+            self.get_handoutinfo_from_dlpage(dlpage_url=dlpage_url)
             for dlpage_url in dlpage_urls
         )
 
