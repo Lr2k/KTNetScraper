@@ -289,15 +289,13 @@ class Scraper(object):
                 message = '学部を指定した場合は、学年も指定してください。'
             raise IncompleteArgumentException(message)
         
-        elif faculty is None:
-            form = {'intSelectYear':date.strftime('%Y'),
-                    'intSelectMonth':date.strftime('%m'),
-                    'intSelectDay':date.strftime('%d'),}
-        else:    
-            form = {'intSelectYear':date.strftime('%Y'),
-                    'intSelectMonth':date.strftime('%m'),
-                    'intSelectDay':date.strftime('%d'),
-                    'strSelectGakubuNen': f'{faculty},{grade}'}
+        form = {
+            'intSelectYear':date.strftime('%Y'),
+            'intSelectMonth':date.strftime('%m'),
+            'intSelectDay':date.strftime('%d'),
+        }
+        if faculty is not None:
+            form['strSelectGakubuNen'] = f'{faculty},{grade}'
 
         response = self.request(method='POST', url=TIMETABLE_URL,
                                 data=form, encoding=PAGE_CHARSET)
