@@ -4,14 +4,25 @@
 
 ## Requirement
 
+### Python
 **python3.10** (他のバージョンでは検証していません。)
 
-ライブラリ：**requests**
+### Library
+- requests
+- urllib3 (v1.21.1 ~ v1.x)
+
+※urllib3 v2.x以降のバージョンでは、SSLv3.0での通信が禁止されるためkt.kanazawa-med.ac.jpに接続できません。
+
+必要なライブラリの導入には、以下のコマンドを使用してください。
+
+```
+pip install -r requirements.txt
+```
 
 ## **Warning**
 初期状態ではrequestsが kt.kanazawa-med.ac.jp のサーバー証明書を検証できないため、SSL/TLSを利用できません。
-SSL/TLSを無視した通信は、中間者攻撃に対し脆弱です。
-SSL/TLSを有効化するには、requestsのcertifiが持つCAバンドルに情報を追加する必要があります。
+SSL/TLSを無視して通信をする場合、中間者攻撃に対し脆弱です。
+SSL/TLSを有効化するには、certifiが持つCAバンドルに情報を追加する必要があります。
 問題が生じてもご自身で対処できる方のみ、tls-setup-guide.mdを参考に自己責任で設定を変更してください。
 
 ## Usage
