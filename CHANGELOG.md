@@ -1,4 +1,8 @@
 # ChageLog
+## [1.1.1] - 2023-09-24
+### Fixed
+- Screaper.get_handoutinfo_from_dlpageメソッドに不要な引数'date'を削除。
+
 ## [1.1.0] - 2023-08-28
 ### Changed
 - requestメソッドの仕様を変更。
