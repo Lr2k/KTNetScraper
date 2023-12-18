@@ -452,7 +452,7 @@ class Scraper(object):
         Returns
         -------
         bytes
-            教材データか教材データを格納したリストを返す。
+            教材ファイルのデータ
         '''
         url = type_checked(url, str)
         return self.request(method='GET', url=url).content
